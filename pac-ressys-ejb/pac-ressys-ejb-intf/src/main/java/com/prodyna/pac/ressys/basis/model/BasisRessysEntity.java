@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -18,17 +20,25 @@ import javax.validation.constraints.NotNull;
  *
  */
 @Entity
-public class BasisRessysEntity implements Serializable {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class BasisRessysEntity implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1351246154068666697L;
 
+	/**
+	 * Key field for all entities.
+	 */
 	private Long id;
 
 	public BasisRessysEntity() {
 
+	}
+	
+	public BasisRessysEntity(Long id){
+		this.id = id;
 	}
 
 	@Id
