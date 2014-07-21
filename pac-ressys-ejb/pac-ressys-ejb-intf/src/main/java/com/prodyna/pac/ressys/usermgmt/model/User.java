@@ -5,6 +5,8 @@ package com.prodyna.pac.ressys.usermgmt.model;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+
 import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
 
 /**
@@ -13,6 +15,7 @@ import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
+@Entity
 public class User extends BasisRessysEntity {
 
 	/**

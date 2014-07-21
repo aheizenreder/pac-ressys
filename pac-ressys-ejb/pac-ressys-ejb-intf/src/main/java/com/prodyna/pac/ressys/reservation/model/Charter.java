@@ -5,6 +5,8 @@ package com.prodyna.pac.ressys.reservation.model;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+
 import com.prodyna.pac.ressys.aircraft.model.Aircraft;
 import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
 import com.prodyna.pac.ressys.usermgmt.model.User;
@@ -15,6 +17,7 @@ import com.prodyna.pac.ressys.usermgmt.model.User;
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
+@Entity
 public class Charter extends BasisRessysEntity {
 
 	/**
