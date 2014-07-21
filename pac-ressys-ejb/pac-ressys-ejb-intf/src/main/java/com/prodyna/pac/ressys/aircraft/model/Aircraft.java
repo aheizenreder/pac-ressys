@@ -3,7 +3,16 @@
  */
 package com.prodyna.pac.ressys.aircraft.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
 
@@ -14,14 +23,19 @@ import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
  *
  */
 @Entity
+@NamedQueries({ @NamedQuery(name = Aircraft.SELECT_ALL_AIRCRAFT, query = "SELECT a FROM Aircraft a") })
+@Table(name = "aircraft", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
 public class Aircraft extends BasisRessysEntity {
 
+	public static final String SELECT_ALL_AIRCRAFT = "selectAllAircraft";
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8223854882376376187L;
 
 	private AircraftType aircraftType;	
+	
 	private String aircraftName;
 	
 	/**
@@ -55,6 +69,9 @@ public class Aircraft extends BasisRessysEntity {
 	/**
 	 * @return the aircraftType
 	 */
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name="aircraft_type_id", referencedColumnName="id")
 	public AircraftType getAircraftType() {
 		return aircraftType;
 	}
@@ -69,11 +86,15 @@ public class Aircraft extends BasisRessysEntity {
 	/**
 	 * @return the aircraftName
 	 */
+	@NotNull
+	@Size(min=3, max=50)
+	@Column(name="aircraft_name")
 	public String getAircraftName() {
 		return aircraftName;
 	}
 
 	/**
+	 * 
 	 * @param aircraftName the aircraftName to set
 	 */
 	public void setAircraftName(String aircraftName) {

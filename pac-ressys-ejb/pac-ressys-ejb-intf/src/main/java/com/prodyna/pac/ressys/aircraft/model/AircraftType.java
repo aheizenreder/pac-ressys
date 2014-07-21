@@ -4,6 +4,12 @@
 package com.prodyna.pac.ressys.aircraft.model;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
 
@@ -14,13 +20,19 @@ import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
  *
  */
 @Entity
+@NamedQueries({ @NamedQuery(name = AircraftType.SELECT_ALL_AIRCRAFT_TYPES, query = "SELECT at FROM AircraftType at") })
+@Table(name = "aircraft_type", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
 public class AircraftType extends BasisRessysEntity {
 
+	public static final String SELECT_ALL_AIRCRAFT_TYPES = "selectAllAircraftTypes";
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2656345636188023807L;
 
+	/**
+	 * name of the type
+	 */
 	private String typeName;
 	
 	/**
@@ -51,6 +63,8 @@ public class AircraftType extends BasisRessysEntity {
 	/**
 	 * @return the typeName
 	 */
+	@NotNull
+	@Size(min = 3, max= 20)
 	public String getTypeName() {
 		return typeName;
 	}

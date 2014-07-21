@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.prodyna.pac.ressys;
+package com.prodyna.pac.ressys.usermgmt.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

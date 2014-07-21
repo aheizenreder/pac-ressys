@@ -54,6 +54,10 @@
         	<artifactId>pac-ressys-ejb-impl</artifactId>
         	<type>ejb</type>
         </dependency>
+        <dependency>
+        	<groupId>com.prodyna.pac.ressys</groupId>
+        	<artifactId>pac-ressys-persistence</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

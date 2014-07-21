@@ -36,5 +36,6 @@
 	<modules>
 		<module>pac-ressys-ejb-intf</module>
 		<module>pac-ressys-ejb-impl</module>
+		<module>pac-ressys-persistence</module>
 	</modules>
 </project>
