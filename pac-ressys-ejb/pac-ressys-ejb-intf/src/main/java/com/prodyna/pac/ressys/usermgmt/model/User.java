@@ -5,7 +5,11 @@ package com.prodyna.pac.ressys.usermgmt.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
 
@@ -23,11 +27,28 @@ public class User extends BasisRessysEntity {
 	 */
 	private static final long serialVersionUID = 8264167079588857563L;
 
+	@NotNull
+	@Column(name="user_name")
+	@Size(min = 1, max= 20)
 	private String userName;
+	@NotNull
+	@Column(name="login_name")
+	@Size(min = 3, max= 20)
 	private String loginName;
+	@NotNull
+	@Size(min = 8, max= 20)
 	private String password;
+	@NotNull
+	@Column(name="email")
+	@Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
+            + "[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
+            + "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9]"
+            + "(?:[a-z0-9-]*[a-z0-9])?",
+            message = "Invalid eMail!")
 	private String eMail;
+	@Column(name="licence_id")
 	private String licenceId;
+	@Column(name="licence_valid_until_date")
 	private Date licenceValidUntilDate;
 	
 	/**

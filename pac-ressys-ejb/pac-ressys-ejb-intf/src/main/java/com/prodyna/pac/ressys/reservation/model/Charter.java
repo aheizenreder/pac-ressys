@@ -32,10 +32,24 @@ public class Charter extends BasisRessysEntity {
 	 */
 	private static final long serialVersionUID = 4153825894732339204L;
 
+	@NotNull
+	@Future
+	@Column(name="start_date")
 	private Date startDate;
+	@NotNull
+	@Future
+	@Column(name="end_date")
 	private Date endDate;
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name="pilot_id", referencedColumnName="id")
 	private User pilot;
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name="aircraft_id", referencedColumnName="id")
 	private Aircraft aircraft;
+	@NotNull
+	@Enumerated(EnumType.STRING)
 	private CharterState charterState;
 	
 	/**
@@ -83,8 +97,6 @@ public class Charter extends BasisRessysEntity {
 	/**
 	 * @return the startDate
 	 */
-	@NotNull
-	@Future
 	@Column(name="start_date")
 	public Date getStartDate() {
 		return startDate;
@@ -100,9 +112,6 @@ public class Charter extends BasisRessysEntity {
 	/**
 	 * @return the endDate
 	 */
-	@NotNull
-	@Future
-	@Column(name="end_date")
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -117,9 +126,6 @@ public class Charter extends BasisRessysEntity {
 	/**
 	 * @return the pilot
 	 */
-	@NotNull
-	@ManyToOne
-	@JoinColumn(name="pilot_id", referencedColumnName="id")
 	public User getPilot() {
 		return pilot;
 	}
@@ -134,9 +140,6 @@ public class Charter extends BasisRessysEntity {
 	/**
 	 * @return the aircraft
 	 */
-	@NotNull
-	@ManyToOne
-	@JoinColumn(name="aircraft_id", referencedColumnName="id")
 	public Aircraft getAircraft() {
 		return aircraft;
 	}
@@ -151,8 +154,6 @@ public class Charter extends BasisRessysEntity {
 	/**
 	 * @return the charterState
 	 */
-	@NotNull
-	@Enumerated(EnumType.STRING)
 	public CharterState getCharterState() {
 		return charterState;
 	}

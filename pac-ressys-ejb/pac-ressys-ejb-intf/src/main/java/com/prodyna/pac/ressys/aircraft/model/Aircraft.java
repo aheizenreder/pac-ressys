@@ -34,8 +34,13 @@ public class Aircraft extends BasisRessysEntity {
 	 */
 	private static final long serialVersionUID = -8223854882376376187L;
 
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name="aircraft_type_id", referencedColumnName="id")
 	private AircraftType aircraftType;	
-	
+	@NotNull
+	@Size(min=3, max=50)
+	@Column(name="aircraft_name")
 	private String aircraftName;
 	
 	/**
@@ -69,9 +74,6 @@ public class Aircraft extends BasisRessysEntity {
 	/**
 	 * @return the aircraftType
 	 */
-	@NotNull
-	@ManyToOne
-	@JoinColumn(name="aircraft_type_id", referencedColumnName="id")
 	public AircraftType getAircraftType() {
 		return aircraftType;
 	}
@@ -86,9 +88,6 @@ public class Aircraft extends BasisRessysEntity {
 	/**
 	 * @return the aircraftName
 	 */
-	@NotNull
-	@Size(min=3, max=50)
-	@Column(name="aircraft_name")
 	public String getAircraftName() {
 		return aircraftName;
 	}

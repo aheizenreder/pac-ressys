@@ -31,6 +31,9 @@ public abstract class BasisRessysEntity implements Serializable {
 	/**
 	 * Key field for all entities.
 	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@NotNull
 	private Long id;
 
 	public BasisRessysEntity() {
@@ -41,9 +44,7 @@ public abstract class BasisRessysEntity implements Serializable {
 		this.id = id;
 	}
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@NotNull
+
 	public Long getId() {
 		return id;
 	}

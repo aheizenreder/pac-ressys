@@ -4,6 +4,7 @@
 package com.prodyna.pac.ressys.usermgmt.model;
 
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
 
@@ -14,6 +15,7 @@ import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
 @Entity
 public class Role extends BasisRessysEntity {
 
+	@NotNull
 	private String role;
 	
 	/**

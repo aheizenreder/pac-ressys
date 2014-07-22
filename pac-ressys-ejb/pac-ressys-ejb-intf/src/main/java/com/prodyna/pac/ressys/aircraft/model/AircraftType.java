@@ -33,6 +33,8 @@ public class AircraftType extends BasisRessysEntity {
 	/**
 	 * name of the type
 	 */
+	@NotNull
+	@Size(min = 3, max= 20)
 	private String typeName;
 	
 	/**
@@ -63,8 +65,6 @@ public class AircraftType extends BasisRessysEntity {
 	/**
 	 * @return the typeName
 	 */
-	@NotNull
-	@Size(min = 3, max= 20)
 	public String getTypeName() {
 		return typeName;
 	}
