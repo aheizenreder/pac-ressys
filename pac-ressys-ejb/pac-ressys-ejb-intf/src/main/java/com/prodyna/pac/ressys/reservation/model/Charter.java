@@ -5,7 +5,14 @@ package com.prodyna.pac.ressys.reservation.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.Future;
+import javax.validation.constraints.NotNull;
 
 import com.prodyna.pac.ressys.aircraft.model.Aircraft;
 import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
@@ -76,6 +83,9 @@ public class Charter extends BasisRessysEntity {
 	/**
 	 * @return the startDate
 	 */
+	@NotNull
+	@Future
+	@Column(name="start_date")
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -90,6 +100,9 @@ public class Charter extends BasisRessysEntity {
 	/**
 	 * @return the endDate
 	 */
+	@NotNull
+	@Future
+	@Column(name="end_date")
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -104,6 +117,9 @@ public class Charter extends BasisRessysEntity {
 	/**
 	 * @return the pilot
 	 */
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name="pilot_id", referencedColumnName="id")
 	public User getPilot() {
 		return pilot;
 	}
@@ -118,6 +134,9 @@ public class Charter extends BasisRessysEntity {
 	/**
 	 * @return the aircraft
 	 */
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name="aircraft_id", referencedColumnName="id")
 	public Aircraft getAircraft() {
 		return aircraft;
 	}
@@ -132,6 +151,8 @@ public class Charter extends BasisRessysEntity {
 	/**
 	 * @return the charterState
 	 */
+	@NotNull
+	@Enumerated(EnumType.STRING)
 	public CharterState getCharterState() {
 		return charterState;
 	}
