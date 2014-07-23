@@ -23,7 +23,8 @@ import com.prodyna.pac.ressys.usermgmt.model.User;
  */
 @IdClass(AircraftTypeToUserKey.class)
 @Entity
-@Table(name="aircraft_type_to_user", uniqueConstraints=@UniqueConstraint(columnNames={"aircraft_type_id", "user_id"}))
+@Table(name = "aircraft_type_to_user", uniqueConstraints = @UniqueConstraint(columnNames = {
+		"aircraft_type_id", "user_id" }))
 public class AircraftTypeToUser {
 
 	@Id
@@ -40,7 +41,7 @@ public class AircraftTypeToUser {
 	 * 
 	 */
 	public AircraftTypeToUser() {
-		super();
+
 	}
 
 	/**
@@ -48,7 +49,6 @@ public class AircraftTypeToUser {
 	 * @param aircraftType
 	 */
 	public AircraftTypeToUser(User user, AircraftType aircraftType) {
-		super();
 		this.user = user;
 		this.aircraftType = aircraftType;
 	}

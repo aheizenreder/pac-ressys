@@ -14,20 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.prodyna.pac.ressys.pac.ressys.rest;
+package com.prodyna.pac.ressys.pac.ressys.service;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import com.prodyna.pac.ressys.pac.ressys.model.Member;
 
-/**
- * A class extending {@link Application} and annotated with @ApplicationPath is the Java EE 6 "no XML" approach to activating
- * JAX-RS.
- * 
- * <p>
- * Resources are served relative to the servlet path specified in the {@link ApplicationPath} annotation.
- * </p>
- */
-@ApplicationPath("/rest")
-public class JaxRsActivator extends Application {
-    /* class body intentionally left blank */
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import java.util.logging.Logger;
+
+// The @Stateless annotation eliminates the need for manual transaction demarcation
+@Stateless
+public class MemberRegistrationImpl implements MemberRegistration{
+
+    @Inject
+    private Logger log;
+
+    @Inject
+    private EntityManager em;
+
+    @Inject
+    private Event<Member> memberEventSrc;
+
+    public void register(Member member) throws Exception {
+        log.info("Registering " + member.getName());
+        em.persist(member);
+        memberEventSrc.fire(member);
+    }
 }

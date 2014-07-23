@@ -93,11 +93,7 @@
         <dependency>
         	<groupId>com.prodyna.pac.ressys</groupId>
         	<artifactId>pac-ressys-ejb-intf</artifactId>
-        </dependency>
-        <dependency>
-        	<groupId>com.prodyna.pac.ressys</groupId>
-        	<artifactId>pac-ressys-ejb-impl</artifactId>
-        	<type>ejb</type>
+        	<scope>provided</scope>
         </dependency>
    </dependencies>
 
