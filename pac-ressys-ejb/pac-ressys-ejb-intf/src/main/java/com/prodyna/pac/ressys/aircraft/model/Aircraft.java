@@ -3,8 +3,13 @@
  */
 package com.prodyna.pac.ressys.aircraft.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -13,8 +18,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
 
 /**
  * The entity representing aircrafts.
@@ -25,29 +28,38 @@ import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
 @Entity
 @NamedQueries({ @NamedQuery(name = Aircraft.SELECT_ALL_AIRCRAFT, query = "SELECT a FROM Aircraft a") })
 @Table(name = "aircraft", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
-public class Aircraft extends BasisRessysEntity {
+public class Aircraft implements Serializable {
 
 	public static final String SELECT_ALL_AIRCRAFT = "selectAllAircraft";
-	
+
 	/**
-	 * 
+	 * Generated value for serialization.
 	 */
 	private static final long serialVersionUID = -8223854882376376187L;
 
+	/**
+	 * Key field for aircraft.
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@NotNull
+	private Long id;
+
 	@NotNull
 	@ManyToOne
-	@JoinColumn(name="aircraft_type_id", referencedColumnName="id")
-	private AircraftType aircraftType;	
+	@JoinColumn(name = "aircraft_type_id", referencedColumnName = "id")
+	private AircraftType aircraftType;
+
 	@NotNull
-	@Size(min=3, max=50)
-	@Column(name="aircraft_name")
+	@Size(min = 3, max = 50)
+	@Column(name = "aircraft_name")
 	private String aircraftName;
-	
+
 	/**
 	 * 
 	 */
 	public Aircraft() {
-		super();
+
 	}
 
 	/**
@@ -55,7 +67,6 @@ public class Aircraft extends BasisRessysEntity {
 	 * @param aircraftName
 	 */
 	public Aircraft(AircraftType aircraftType, String aircraftName) {
-		super();
 		this.aircraftType = aircraftType;
 		this.aircraftName = aircraftName;
 	}
@@ -66,9 +77,23 @@ public class Aircraft extends BasisRessysEntity {
 	 * @param aircraftName
 	 */
 	public Aircraft(long id, AircraftType aircraftType, String aircraftName) {
-		super(id);
+		this.id = id;
 		this.aircraftType = aircraftType;
 		this.aircraftName = aircraftName;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	/**
@@ -79,7 +104,8 @@ public class Aircraft extends BasisRessysEntity {
 	}
 
 	/**
-	 * @param aircraftType the aircraftType to set
+	 * @param aircraftType
+	 *            the aircraftType to set
 	 */
 	public void setAircraftType(AircraftType aircraftType) {
 		this.aircraftType = aircraftType;
@@ -94,13 +120,16 @@ public class Aircraft extends BasisRessysEntity {
 
 	/**
 	 * 
-	 * @param aircraftName the aircraftName to set
+	 * @param aircraftName
+	 *            the aircraftName to set
 	 */
 	public void setAircraftName(String aircraftName) {
 		this.aircraftName = aircraftName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -109,7 +138,9 @@ public class Aircraft extends BasisRessysEntity {
 				+ ", aircraftName=" + aircraftName + "]";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -124,7 +155,9 @@ public class Aircraft extends BasisRessysEntity {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -150,5 +183,5 @@ public class Aircraft extends BasisRessysEntity {
 			return false;
 		return true;
 	}
-	
+
 }

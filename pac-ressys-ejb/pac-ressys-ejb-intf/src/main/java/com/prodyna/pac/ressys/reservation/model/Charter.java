@@ -3,19 +3,24 @@
  */
 package com.prodyna.pac.ressys.reservation.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 
 import com.prodyna.pac.ressys.aircraft.model.Aircraft;
-import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
 import com.prodyna.pac.ressys.usermgmt.model.User;
 
 /**
@@ -25,38 +30,51 @@ import com.prodyna.pac.ressys.usermgmt.model.User;
  *
  */
 @Entity
-public class Charter extends BasisRessysEntity {
+@Table(name = "charter", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
+public class Charter implements Serializable {
 
 	/**
-	 * 
+	 * generated uid for serialization.
 	 */
 	private static final long serialVersionUID = 4153825894732339204L;
 
+	/**
+	 * Key field for charter entities.
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@NotNull
+	private Long id;
+
 	@NotNull
 	@Future
-	@Column(name="start_date")
+	@Column(name = "start_date")
 	private Date startDate;
+	
 	@NotNull
 	@Future
-	@Column(name="end_date")
+	@Column(name = "end_date")
 	private Date endDate;
+	
 	@NotNull
 	@ManyToOne
-	@JoinColumn(name="pilot_id", referencedColumnName="id")
+	@JoinColumn(name = "pilot_id", referencedColumnName = "id")
 	private User pilot;
+	
 	@NotNull
 	@ManyToOne
-	@JoinColumn(name="aircraft_id", referencedColumnName="id")
+	@JoinColumn(name = "aircraft_id", referencedColumnName = "id")
 	private Aircraft aircraft;
+	
 	@NotNull
 	@Enumerated(EnumType.STRING)
+	@Column(name = "charter_state")
 	private CharterState charterState;
-	
+
 	/**
 	 * 
 	 */
 	public Charter() {
-		super();
 	}
 
 	/**
@@ -68,7 +86,6 @@ public class Charter extends BasisRessysEntity {
 	 */
 	public Charter(Date startDate, Date endDate, User pilot, Aircraft aircraft,
 			CharterState charterState) {
-		super();
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.pilot = pilot;
@@ -86,7 +103,7 @@ public class Charter extends BasisRessysEntity {
 	 */
 	public Charter(long id, Date startDate, Date endDate, User pilot,
 			Aircraft aircraft, CharterState charterState) {
-		super(id);
+		this.id = id;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.pilot = pilot;
@@ -95,15 +112,30 @@ public class Charter extends BasisRessysEntity {
 	}
 
 	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	/**
 	 * @return the startDate
 	 */
-	@Column(name="start_date")
+	@Column(name = "start_date")
 	public Date getStartDate() {
 		return startDate;
 	}
 
 	/**
-	 * @param startDate the startDate to set
+	 * @param startDate
+	 *            the startDate to set
 	 */
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
@@ -117,7 +149,8 @@ public class Charter extends BasisRessysEntity {
 	}
 
 	/**
-	 * @param endDate the endDate to set
+	 * @param endDate
+	 *            the endDate to set
 	 */
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
@@ -131,7 +164,8 @@ public class Charter extends BasisRessysEntity {
 	}
 
 	/**
-	 * @param pilot the pilot to set
+	 * @param pilot
+	 *            the pilot to set
 	 */
 	public void setPilot(User pilot) {
 		this.pilot = pilot;
@@ -145,7 +179,8 @@ public class Charter extends BasisRessysEntity {
 	}
 
 	/**
-	 * @param aircraft the aircraft to set
+	 * @param aircraft
+	 *            the aircraft to set
 	 */
 	public void setAircraft(Aircraft aircraft) {
 		this.aircraft = aircraft;
@@ -159,23 +194,28 @@ public class Charter extends BasisRessysEntity {
 	}
 
 	/**
-	 * @param charterState the charterState to set
+	 * @param charterState
+	 *            the charterState to set
 	 */
 	public void setCharterState(CharterState charterState) {
 		this.charterState = charterState;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Charter [id=" + getId() + ", startDate=" + startDate + ", endDate="
-				+ endDate + ", pilot=" + pilot + ", aircraft=" + aircraft
-				+ ", charterState=" + charterState + "]";
+		return "Charter [id=" + getId() + ", startDate=" + startDate
+				+ ", endDate=" + endDate + ", pilot=" + pilot + ", aircraft="
+				+ aircraft + ", charterState=" + charterState + "]";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -194,7 +234,9 @@ public class Charter extends BasisRessysEntity {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -235,5 +277,5 @@ public class Charter extends BasisRessysEntity {
 			return false;
 		return true;
 	}
-	
+
 }

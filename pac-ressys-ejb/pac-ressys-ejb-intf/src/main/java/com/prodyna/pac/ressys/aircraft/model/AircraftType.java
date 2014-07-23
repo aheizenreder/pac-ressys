@@ -3,15 +3,18 @@
  */
 package com.prodyna.pac.ressys.aircraft.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
 
 /**
  * This entity implements types of aircrafts.
@@ -22,28 +25,37 @@ import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
 @Entity
 @NamedQueries({ @NamedQuery(name = AircraftType.SELECT_ALL_AIRCRAFT_TYPES, query = "SELECT at FROM AircraftType at") })
 @Table(name = "aircraft_type", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
-public class AircraftType extends BasisRessysEntity {
+public class AircraftType implements Serializable {
 
 	public static final String SELECT_ALL_AIRCRAFT_TYPES = "selectAllAircraftTypes";
+
 	/**
-	 * 
+	 * generated uid for serialization.
 	 */
 	private static final long serialVersionUID = -2656345636188023807L;
+
+	/**
+	 * Key field for AircraftType.
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@NotNull
+	private Long id;
 
 	/**
 	 * name of the type
 	 */
 	@NotNull
-	@Size(min = 3, max= 20)
+	@Size(min = 3, max = 20)
 	private String typeName;
-	
+
 	/**
 	 * 
 	 */
 	public AircraftType() {
 		super();
 	}
-	
+
 	/**
 	 * @param typeName
 	 */
@@ -57,10 +69,24 @@ public class AircraftType extends BasisRessysEntity {
 	 * @param typeName
 	 */
 	public AircraftType(long id, String typeName) {
-		super(id);
+		this.id = id;
 		this.typeName = typeName;
 	}
 
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	/**
 	 * @return the typeName
@@ -70,13 +96,16 @@ public class AircraftType extends BasisRessysEntity {
 	}
 
 	/**
-	 * @param typeName the typeName to set
+	 * @param typeName
+	 *            the typeName to set
 	 */
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -84,7 +113,9 @@ public class AircraftType extends BasisRessysEntity {
 		return "AircraftType [id=" + getId() + ", typeName=" + typeName + "]";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -97,7 +128,9 @@ public class AircraftType extends BasisRessysEntity {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -118,5 +151,5 @@ public class AircraftType extends BasisRessysEntity {
 			return false;
 		return true;
 	}
-	
+
 }

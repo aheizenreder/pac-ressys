@@ -3,87 +3,69 @@
  */
 package com.prodyna.pac.ressys.usermgmt.model;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 
 /**
+ * this entity represents the assigment of roles to a user
+ * 
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
+@IdClass(UserToRoleKey.class)
 @Entity
-@Table(name = "role", uniqueConstraints = @UniqueConstraint(columnNames = {"id", "role"}))
-public class Role implements Serializable{
+@Table(name="user_to_role", uniqueConstraints=@UniqueConstraint(columnNames={"user_id", "role_id"}))
+public class UserToRole {
 
-	/**
-	 * generated uid for serialization.
-	 */
-	private static final long serialVersionUID = -2891368829390420206L;
-
-	/**
-	 * Key field for role.
-	 */
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@NotNull
-	private Long id;
+	@ManyToOne
+	@JoinColumn(name="user_id", referencedColumnName="id")
+	private User user;
 
-	@NotNull
-	private String role;
+	@Id
+	@ManyToOne
+	@JoinColumn(name="role_id", referencedColumnName="id")
+	private Role role;
 	
-	/**
-	 * 
-	 */
-	public Role() {
+	public UserToRole(){
+		
 	}
-
-	/**
-	 * @param role
-	 */
-	public Role(String role) {
+	
+	public UserToRole(User user, Role role){
+		this.user = user;
 		this.role = role;
 	}
 
 	/**
-	 * @param id
-	 * @param role
+	 * @return the user
 	 */
-	public Role(long id, String role) {
-		this.id = id;
-		this.role = role;
+	public User getUser() {
+		return user;
 	}
 
 	/**
-	 * @return the id
+	 * @param user the user to set
 	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	/**
 	 * @return the role
 	 */
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
 
 	/**
 	 * @param role the role to set
 	 */
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 
@@ -92,7 +74,7 @@ public class Role implements Serializable{
 	 */
 	@Override
 	public String toString() {
-		return "Role [id=" + getId() + ", role=" + role + "]";
+		return "UserToRole [user=" + user + ", role=" + role + "]";
 	}
 
 	/* (non-Javadoc)
@@ -102,8 +84,8 @@ public class Role implements Serializable{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (getId() ^ (getId() >>> 32));
 		result = prime * result + ((role == null) ? 0 : role.hashCode());
+		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		return result;
 	}
 
@@ -118,18 +100,19 @@ public class Role implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Role other = (Role) obj;
-		if (getId() != other.getId())
-			return false;
+		UserToRole other = (UserToRole) obj;
 		if (role == null) {
 			if (other.role != null)
 				return false;
 		} else if (!role.equals(other.role))
 			return false;
+		if (user == null) {
+			if (other.user != null)
+				return false;
+		} else if (!user.equals(other.user))
+			return false;
 		return true;
 	}
-	
-	
 	
 	
 }

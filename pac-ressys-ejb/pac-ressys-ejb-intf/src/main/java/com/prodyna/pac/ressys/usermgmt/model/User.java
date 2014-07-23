@@ -3,15 +3,19 @@
  */
 package com.prodyna.pac.ressys.usermgmt.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
 
 /**
  * Entity for user representation.
@@ -20,24 +24,37 @@ import com.prodyna.pac.ressys.basis.model.BasisRessysEntity;
  *
  */
 @Entity
-public class User extends BasisRessysEntity {
+@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = {"id", "login_name"}))
+public class User implements Serializable{
 
 	/**
-	 * 
+	 * generated value for serialization.
 	 */
 	private static final long serialVersionUID = 8264167079588857563L;
 
+	/**
+	 * Key field for user.
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@NotNull
+	private Long id;
+
+	
 	@NotNull
 	@Column(name="user_name")
 	@Size(min = 1, max= 20)
 	private String userName;
+	
 	@NotNull
 	@Column(name="login_name")
 	@Size(min = 3, max= 20)
 	private String loginName;
+	
 	@NotNull
 	@Size(min = 8, max= 20)
 	private String password;
+	
 	@NotNull
 	@Column(name="email")
 	@Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
@@ -46,8 +63,10 @@ public class User extends BasisRessysEntity {
             + "(?:[a-z0-9-]*[a-z0-9])?",
             message = "Invalid eMail!")
 	private String eMail;
+	
 	@Column(name="licence_id")
 	private String licenceId;
+	
 	@Column(name="licence_valid_until_date")
 	private Date licenceValidUntilDate;
 	
@@ -55,7 +74,6 @@ public class User extends BasisRessysEntity {
 	 * 
 	 */
 	public User() {
-		super();
 	}
 	
 	/**
@@ -68,7 +86,6 @@ public class User extends BasisRessysEntity {
 	 */
 	public User(String userName, String loginName, String password,
 			String eMail, String licenceId, Date licenceValidUntilDate) {
-		super();
 		this.userName = userName;
 		this.loginName = loginName;
 		this.password = password;
@@ -88,13 +105,27 @@ public class User extends BasisRessysEntity {
 	 */
 	public User(long id, String userName, String loginName, String password,
 			String eMail, String licenceId, Date licenceValidUntilDate) {
-		super(id);
+		this.id = id;
 		this.userName = userName;
 		this.loginName = loginName;
 		this.password = password;
 		this.eMail = eMail;
 		this.licenceId = licenceId;
 		this.licenceValidUntilDate = licenceValidUntilDate;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	/**

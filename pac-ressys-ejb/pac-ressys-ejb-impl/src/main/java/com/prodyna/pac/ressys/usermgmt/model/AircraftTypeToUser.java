@@ -5,36 +5,44 @@ package com.prodyna.pac.ressys.usermgmt.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.prodyna.pac.ressys.aircraft.model.AircraftType;
 import com.prodyna.pac.ressys.usermgmt.model.User;
 
 /**
+ * this entity is used for the relation between users and aircraft types. This
+ * relation represents the aircraft types which an user can fly.
+ * 
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
+@IdClass(AircraftTypeToUserKey.class)
 @Entity
+@Table(name="aircraft_type_to_user", uniqueConstraints=@UniqueConstraint(columnNames={"aircraft_type_id", "user_id"}))
 public class AircraftTypeToUser {
+
+	@Id
+	@ManyToOne
+	@JoinColumn(name = "aircraft_type_id", referencedColumnName = "id")
+	private AircraftType aircraftType;
 
 	@Id
 	@ManyToOne
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;
-	
-	@Id
-	@ManyToOne
-	@JoinColumn(name = "aircraft_type_id", referencedColumnName = "id")
-	private AircraftType aircraftType;
-	
+
 	/**
 	 * 
 	 */
 	public AircraftTypeToUser() {
 		super();
 	}
-	
+
 	/**
 	 * @param user
 	 * @param aircraftType
@@ -53,7 +61,8 @@ public class AircraftTypeToUser {
 	}
 
 	/**
-	 * @param user the user to set
+	 * @param user
+	 *            the user to set
 	 */
 	public void setUser(User user) {
 		this.user = user;
@@ -67,13 +76,16 @@ public class AircraftTypeToUser {
 	}
 
 	/**
-	 * @param aircraftType the aircraftType to set
+	 * @param aircraftType
+	 *            the aircraftType to set
 	 */
 	public void setAircraftType(AircraftType aircraftType) {
 		this.aircraftType = aircraftType;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -82,7 +94,9 @@ public class AircraftTypeToUser {
 				+ aircraftType + "]";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -95,7 +109,9 @@ public class AircraftTypeToUser {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -119,5 +135,5 @@ public class AircraftTypeToUser {
 			return false;
 		return true;
 	}
-	 
+
 }
