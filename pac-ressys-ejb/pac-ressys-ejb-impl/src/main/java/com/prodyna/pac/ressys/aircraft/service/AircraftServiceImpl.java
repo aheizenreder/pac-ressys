@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.Path;
 
 import com.prodyna.pac.ressys.aircraft.model.Aircraft;
 import com.prodyna.pac.ressys.basis.service.BasisRessysServiceImpl;
@@ -18,7 +17,6 @@ import com.prodyna.pac.ressys.basis.service.BasisRessysServiceImpl;
  *
  */
 @Stateless
-@Path("aircraft")
 public class AircraftServiceImpl extends BasisRessysServiceImpl<Aircraft>
 		implements AircraftService {
 

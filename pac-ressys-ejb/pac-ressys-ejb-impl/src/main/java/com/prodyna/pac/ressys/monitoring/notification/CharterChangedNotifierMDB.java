@@ -11,15 +11,15 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
 /**
- * Message driven bean to process notifications for talk changes.
+ * Message driven bean to process notifications for charter changes.
  * 
  * @author Andreas Heizenreder (andreas.heizenreder@prodyna.com)
  * 
  */
 public @MessageDriven(activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/talkChangedNotificationQueue") })
-class TalkChangedNotifierMDB implements MessageListener {
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/charterChangedNotificationQueue") })
+class CharterChangedNotifierMDB implements MessageListener {
 
 	@Inject
 	private Logger log;
@@ -30,7 +30,7 @@ class TalkChangedNotifierMDB implements MessageListener {
 		try {
 			if (message instanceof TextMessage) {
 				textMessage = (TextMessage) message;
-				log.info("Received Talk changed notification: "
+				log.info("Received Charter changed notification: "
 						+ textMessage.getText());
 			} else {
 				log.severe("Not supported message type received: "
