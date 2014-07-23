@@ -1,21 +1,16 @@
 /**
  * 
  */
-package com.prodyna.pac.ressys.test.aircraft.service;
+package com.prodyna.pac.ressys.test.rest.aircraft.service;
 
 import java.net.URL;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.shrinkwrap.api.Archive;
@@ -32,8 +27,11 @@ import com.prodyna.pac.ressys.aircraft.model.AircraftType;
 import com.prodyna.pac.ressys.aircraft.service.AircraftService;
 import com.prodyna.pac.ressys.aircraft.service.AircraftTypeService;
 import com.prodyna.pac.ressys.test.Deployments;
+import com.prodyna.pac.ressys.util.rest.RestClientProducer;
 
 /**
+ * Test for rest aircraft service.
+ * 
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
@@ -43,7 +41,6 @@ public class AircraftRestServiceTest {
 
 	private Logger log = Logger.getLogger(AircraftRestServiceTest.class
 			.getName());
-
 
 	@ArquillianResource
 	private URL deploymentURL;
@@ -83,13 +80,13 @@ public class AircraftRestServiceTest {
 	}
 
 	@Test
-	public void test() {
+	public void testAircraftRestService() {
 
 		log.info("START test aircraft service ...");
-		
-		AircraftService aircraftService = createServiceClient(AircraftService.class);
 
-		AircraftTypeService aircraftTypeService = createServiceClient(AircraftTypeService.class);
+		AircraftService aircraftService = RestClientProducer.createServiceClient(deploymentURL.toString() + "rest", AircraftService.class);
+
+		AircraftTypeService aircraftTypeService = RestClientProducer.createServiceClient(deploymentURL.toString() + "rest", AircraftTypeService.class);
 
 		AircraftType type = new AircraftType("B373");
 
@@ -100,7 +97,7 @@ public class AircraftRestServiceTest {
 
 		List<Aircraft> aircraftList = aircraftService.getAll();
 		int startListSize = aircraftList.size();
-		
+
 		Aircraft aircraft = new Aircraft(type, "D-LHAD");
 
 		aircraft = aircraftService.create(aircraft);
@@ -116,32 +113,20 @@ public class AircraftRestServiceTest {
 		dbAircraft = aircraftService.update(aircraft);
 
 		Assert.assertEquals(aircraft, dbAircraft);
-		
+
 		// test getAll
 		List<Aircraft> newAircraftList = aircraftService.getAll();
-		Assert.assertEquals(startListSize+1, newAircraftList.size());
-		
+		Assert.assertEquals(startListSize + 1, newAircraftList.size());
+
 		// delete aircraft
 		dbAircraft = aircraftService.delete(aircraft);
 		// try to get deleted aircraft
 		dbAircraft = aircraftService.get(dbAircraft.getId());
 		Assert.assertNull(dbAircraft);
-		
+
 		aircraftTypeService.delete(type);
-		
+
 		log.info("END test()");
-	}
-
-	protected <C> C createServiceClient(Class<C> clazz) {
-
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(deploymentURL.toString() + "rest");
-		ResteasyWebTarget resteasyWebTarget = (ResteasyWebTarget) target;
-
-		C service = resteasyWebTarget.proxy(clazz);
-
-		return service;
-
 	}
 
 }

@@ -97,6 +97,25 @@
 			</dependency>
 
 			<dependency>
+				<groupId>com.prodyna.pac.ressys</groupId>
+				<artifactId>pac-ressys-persistence</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.prodyna.pac.ressys</groupId>
+				<artifactId>pac-ressys-ejb-intf</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.prodyna.pac.ressys</groupId>
+				<artifactId>pac-ressys-ejb-impl</artifactId>
+				<version>${project.version}</version>
+				<type>ejb</type>
+			</dependency>
+
+			<dependency>
 				<groupId>org.jboss.shrinkwrap</groupId>
 				<artifactId>shrinkwrap-bom</artifactId>
 				<version>${version.shrinkwrap.bom}</version>
@@ -144,23 +163,6 @@
 				<scope>import</scope>
 			</dependency>
 
-			<dependency>
-				<groupId>com.prodyna.pac.ressys</groupId>
-				<artifactId>pac-ressys-ejb-intf</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.prodyna.pac.ressys</groupId>
-				<artifactId>pac-ressys-ejb-impl</artifactId>
-				<version>${project.version}</version>
-				<type>ejb</type>
-			</dependency>
-			<dependency>
-				<groupId>com.prodyna.pac.ressys</groupId>
-				<artifactId>pac-ressys-persistence</artifactId>
-				<version>${project.version}</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

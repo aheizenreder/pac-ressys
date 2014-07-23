@@ -7,7 +7,7 @@ import java.io.File;
 
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 /**
@@ -20,24 +20,20 @@ public class Deployments {
 
 	public static Archive<?> createDeployment() {
 
-		File[] modules = Maven.resolver()
-				.loadPomFromFile("../../pac-ressys-ear/pom.xml")
-				.resolve("com.prodyna.pac.ressys:pac-ressys-ejb-impl",
-						"com.prodyna.pac.ressys:pac-ressys-web:war:?")
-				.withoutTransitivity().asFile();
-
 		File[] libs = Maven
 				.resolver()
 				.loadPomFromFile("../../pac-ressys-ear/pom.xml")
-				.resolve("com.prodyna.pac.ressys:pac-ressys-ejb-intf",
-						"com.prodyna.pac.ressys:pac-ressys-persistence")
+				.resolve("com.prodyna.pac.ressys:pac-ressys-ejb-intf")
 				.withoutTransitivity().asFile();
 
-		EnterpriseArchive ressysEar = ShrinkWrap.create(
-				EnterpriseArchive.class, "pac-ressys-ear.ear");
+
+		WebArchive ressysEar = ShrinkWrap.create(
+				WebArchive.class, "pac-ressys-test.war");
+		ressysEar.addPackages(true, "com/prodyna/pac/ressys");
+		ressysEar.deletePackages(true, "com/prodyna/pac/ressys/test/rest");
+		ressysEar.addAsResource(new File("../pac-ressys-persistence/src/main/resources/META-INF/persistence.xml"),"META-INF/persistence.xml");
+		ressysEar.addAsWebInfResource(new File("src/main/resources/META-INF/beans.xml"), "beans.xml");
 		ressysEar.addAsLibraries(libs);
-		ressysEar.addAsModules(modules);
-		ressysEar.setApplicationXML("application.xml");
 
 		return ressysEar;
 	}

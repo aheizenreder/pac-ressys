@@ -16,8 +16,7 @@ import javax.persistence.Query;
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
-public abstract class BasisRessysServiceImpl<T> implements
-		BasisRessysService<T> {
+public abstract class BasisRessysServiceImpl<T>{
 
 	@Inject
 	private Logger log;
@@ -32,7 +31,7 @@ public abstract class BasisRessysServiceImpl<T> implements
 	 * com.prodyna.pac.ressys.basis.service.BasisRessysService#create(java.lang
 	 * .Object)
 	 */
-	public T create(T entity) {
+	public T createEntity(T entity) {
 		log.info("Create new  entity in the database ...");
 		em.persist(entity);
 		log.info("Entity " + entity.toString() + " persisted . ");
@@ -47,7 +46,7 @@ public abstract class BasisRessysServiceImpl<T> implements
 	 * com.prodyna.pac.ressys.basis.service.BasisRessysService#get(java.lang
 	 * .Long)
 	 */
-	protected T get(Class<T> clazz, Long id) {
+	protected T getEntity(Class<T> clazz, Long id) {
 		T entity = null;
 		log.info("Get entity by id " + id);
 		entity = em.find(clazz, id);
@@ -63,7 +62,7 @@ public abstract class BasisRessysServiceImpl<T> implements
 	 * @see com.prodyna.pac.ressys.basis.service.BasisRessysService#getAll()
 	 */
 	@SuppressWarnings("unchecked")
-	protected List<T> getAll(String namedQueryName) {
+	protected List<T> getAllEntities(String namedQueryName) {
 
 		Query selectAllQuery = em.createNamedQuery(namedQueryName);
 		List<T> resultList = (List<T>) selectAllQuery.getResultList();
@@ -81,7 +80,7 @@ public abstract class BasisRessysServiceImpl<T> implements
 	 * com.prodyna.pac.ressys.basis.service.BasisRessysService#update(java.lang
 	 * .Object)
 	 */
-	public T update(T entity) {
+	public T updateEntity(T entity) {
 		log.info("Update entiy" + entity.toString() + " ...");
 		em.merge(entity);
 		log.info("Entity updated.");
@@ -98,7 +97,7 @@ public abstract class BasisRessysServiceImpl<T> implements
 	 *            the id of the entity to delete.
 	 * @return the instance of deleted object.
 	 */
-	protected T delete(Class<T> clazz, Long id) {
+	protected T deleteEntity(Class<T> clazz, Long id) {
 		log.info("Delete entity  with id " + id + "...");
 		T dbEntity = em.find(clazz, id);
 		em.remove(dbEntity);

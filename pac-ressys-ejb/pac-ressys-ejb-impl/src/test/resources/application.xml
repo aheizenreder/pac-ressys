@@ -3,7 +3,7 @@
   <display-name>pac-ressys-ear</display-name>
   <module>
     <web>
-      <web-uri>pac-ressys-web.war</web-uri>
+      <web-uri>pac-ressys-web-0.0.1-SNAPSHOT.war</web-uri>
       <context-root>/pac-ressys-web</context-root>
     </web>
   </module>
