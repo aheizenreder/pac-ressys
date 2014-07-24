@@ -11,11 +11,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import com.prodyna.pac.ressys.aircraft.model.Aircraft;
 
 /**
  * Entity for user representation.
@@ -24,8 +28,11 @@ import javax.validation.constraints.Size;
  *
  */
 @Entity
+@NamedQueries({ @NamedQuery(name = User.SELECT_ALL_USER, query = "SELECT a FROM User a") })
 @Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = {"id", "login_name"}))
 public class User implements Serializable{
+	
+	public static final String SELECT_ALL_USER = "selectAllUser";
 
 	/**
 	 * generated value for serialization.
@@ -52,7 +59,7 @@ public class User implements Serializable{
 	private String loginName;
 	
 	@NotNull
-	@Size(min = 8, max= 20)
+	@Size(min = 7, max= 20)
 	private String password;
 	
 	@NotNull

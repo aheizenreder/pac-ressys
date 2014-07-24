@@ -15,87 +15,85 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.prodyna.pac.ressys.aircraft.model.Aircraft;
 import com.prodyna.pac.ressys.basis.security.AdminAccessOnly;
 import com.prodyna.pac.ressys.basis.security.AllAccess;
 import com.prodyna.pac.ressys.basis.security.Secured;
-import com.prodyna.pac.ressys.basis.service.BasisRessysService;
 import com.prodyna.pac.ressys.monitoring.logging.Logged;
-import com.prodyna.pac.ressys.usermgmt.model.User;
+import com.prodyna.pac.ressys.usermgmt.model.Role;
 
 /**
- * Interface for User service.
- * 
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
 @Logged
 @Secured
-@Path("/user")
-public interface UserService{
+@Path("/role")
+public interface RoleService {
+
 	/**
-	 * persists the user in the database.
+	 * persists the role in the database.
 	 * 
-	 * @param user
-	 *            the user object to persists in the database.
-	 * @return the with key information enriched user  object.
+	 * @param role
+	 *            the role object to persists in the database.
+	 * @return the with key information enriched role  object.
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@AdminAccessOnly
-	public User create(User user);
+	public Role create(Role role);
 
 	/**
-	 * reads the user identified by id from the database.
+	 * reads the role identified by id from the database.
 	 * 
 	 * @param id
-	 *            Id of the user, which is to read.
+	 *            Id of the role, which is to read.
 	 * 
-	 * @return from database read user object.
+	 * @return from database read role object.
 	 */
 	@GET
 	@Path("/{id:[0-9]+}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@AllAccess
-	public User get(@PathParam("id") Long id);
+	public Role get(@PathParam("id") Long id);
 
 	/**
-	 * reads all user from database.
+	 * reads all role from database.
 	 * 
 	 * @return a List of entities.
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@AllAccess
-	public List<User> getAll();
+	public List<Role> getAll();
 
 	/**
-	 * persists changes on the user object in the database.
+	 * persists changes on the role object in the database.
 	 * 
-	 * @param user
-	 *            the user object with updated properties, which are to
+	 * @param role
+	 *            the role object with updated properties, which are to
 	 *            persist.
 	 * 
-	 * @return the updated user object.
+	 * @return the updated role object.
 	 */
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@AdminAccessOnly
-	public User update(User user);
+	public Role update(Role role);
 
 	/**
-	 * deletes by the user represented object from database.
+	 * deletes by the role represented object from database.
 	 * 
-	 * @param user
+	 * @param role
 	 *            object to delete.
 	 * 
-	 * @return updated user object after delete.
+	 * @return updated role object after delete.
 	 */
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@AdminAccessOnly
-	public User delete(User user);
+	public Role delete(Role role);
+	
 }
