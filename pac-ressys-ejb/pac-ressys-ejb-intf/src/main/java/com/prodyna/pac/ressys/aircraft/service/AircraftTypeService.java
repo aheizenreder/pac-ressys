@@ -20,6 +20,7 @@ import com.prodyna.pac.ressys.basis.security.AdminAccessOnly;
 import com.prodyna.pac.ressys.basis.security.AllAccess;
 import com.prodyna.pac.ressys.basis.security.Secured;
 import com.prodyna.pac.ressys.monitoring.logging.Logged;
+import com.prodyna.pac.ressys.monitoring.performance.Monitored;
 
 /**
  * Interface for operations on AircraftType.
@@ -28,6 +29,7 @@ import com.prodyna.pac.ressys.monitoring.logging.Logged;
  *
  */
 @Logged
+@Monitored
 @Secured
 @Path("/aircraft_type")
 public interface AircraftTypeService {

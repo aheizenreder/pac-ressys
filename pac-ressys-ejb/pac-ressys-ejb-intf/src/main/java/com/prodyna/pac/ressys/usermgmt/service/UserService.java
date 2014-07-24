@@ -15,12 +15,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.prodyna.pac.ressys.aircraft.model.Aircraft;
 import com.prodyna.pac.ressys.basis.security.AdminAccessOnly;
 import com.prodyna.pac.ressys.basis.security.AllAccess;
 import com.prodyna.pac.ressys.basis.security.Secured;
-import com.prodyna.pac.ressys.basis.service.BasisRessysService;
 import com.prodyna.pac.ressys.monitoring.logging.Logged;
+import com.prodyna.pac.ressys.monitoring.performance.Monitored;
 import com.prodyna.pac.ressys.usermgmt.model.User;
 
 /**
@@ -30,6 +29,7 @@ import com.prodyna.pac.ressys.usermgmt.model.User;
  *
  */
 @Logged
+@Monitored
 @Secured
 @Path("/user")
 public interface UserService{
