@@ -15,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Future;
@@ -30,9 +32,12 @@ import com.prodyna.pac.ressys.usermgmt.model.User;
  *
  */
 @Entity
+@NamedQueries({ @NamedQuery(name = Charter.SELECT_ALL_CHARTER, query = "SELECT a FROM Charter a") })
 @Table(name = "charter", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
 public class Charter implements Serializable {
 
+	public static final String SELECT_ALL_CHARTER = "selectAllCharter";
+	
 	/**
 	 * generated uid for serialization.
 	 */

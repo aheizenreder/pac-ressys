@@ -4,7 +4,12 @@
 package com.prodyna.pac.ressys.usermgmt.service;
 
 import java.util.List;
+import java.util.logging.Logger;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import com.prodyna.pac.ressys.aircraft.model.Aircraft;
 import com.prodyna.pac.ressys.basis.service.BasisRessysServiceImpl;
 import com.prodyna.pac.ressys.usermgmt.model.Role;
 
@@ -12,16 +17,21 @@ import com.prodyna.pac.ressys.usermgmt.model.Role;
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
+@Stateless
 public class RoleServiceImpl extends BasisRessysServiceImpl<Role>
 implements RoleService{
+	
+	@Inject
+	private Logger log;
 
 	/* (non-Javadoc)
 	 * @see com.prodyna.pac.ressys.usermgmt.service.RoleService#create(com.prodyna.pac.ressys.usermgmt.model.Role)
 	 */
 	@Override
 	public Role create(Role role) {
-		// TODO Auto-generated method stub
-		return null;
+		log.info("persist role ...");
+		Role persisted = createEntity(role);
+		return persisted;
 	}
 
 	/* (non-Javadoc)
@@ -29,8 +39,9 @@ implements RoleService{
 	 */
 	@Override
 	public Role get(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		log.info("get role by id: " + id + "...");
+		Role role = getEntity(Role.class, id);
+		return role;
 	}
 
 	/* (non-Javadoc)
@@ -38,8 +49,10 @@ implements RoleService{
 	 */
 	@Override
 	public List<Role> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+		log.info("get all roles ...");
+		List<Role> resultList = getAllEntities(Role.SELECT_ALL_ROLE);
+		log.info("found " + resultList.size() + " roles.");
+		return resultList;
 	}
 
 	/* (non-Javadoc)
@@ -47,8 +60,9 @@ implements RoleService{
 	 */
 	@Override
 	public Role update(Role role) {
-		// TODO Auto-generated method stub
-		return null;
+		log.info("update role ..");
+		Role updated = updateEntity(role);
+		return updated;
 	}
 
 	/* (non-Javadoc)
@@ -56,8 +70,11 @@ implements RoleService{
 	 */
 	@Override
 	public Role delete(Role role) {
-		// TODO Auto-generated method stub
-		return null;
+		log.info("Delete role with id " + role.getId());
+		Role r = deleteEntity(Role.class, role.getId());
+		log.info("Role with id " + r.getId() + " was deleted.");
+
+		return r;
 	}
 
 }

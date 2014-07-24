@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -18,9 +20,12 @@ import javax.validation.constraints.NotNull;
  *
  */
 @Entity
+@NamedQueries({ @NamedQuery(name = Role.SELECT_ALL_ROLE, query = "SELECT a FROM Role a") })
 @Table(name = "role", uniqueConstraints = @UniqueConstraint(columnNames = {"id", "role"}))
 public class Role implements Serializable{
 
+	public static final String SELECT_ALL_ROLE = "selectAllRole";
+	
 	/**
 	 * generated uid for serialization.
 	 */

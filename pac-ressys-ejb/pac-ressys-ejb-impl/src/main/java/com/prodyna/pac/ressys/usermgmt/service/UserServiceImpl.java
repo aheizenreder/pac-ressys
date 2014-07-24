@@ -6,10 +6,9 @@ package com.prodyna.pac.ressys.usermgmt.service;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import com.prodyna.pac.ressys.aircraft.model.Aircraft;
-import com.prodyna.pac.ressys.aircraft.service.AircraftService;
 import com.prodyna.pac.ressys.basis.service.BasisRessysServiceImpl;
 import com.prodyna.pac.ressys.usermgmt.model.User;
 
@@ -17,6 +16,7 @@ import com.prodyna.pac.ressys.usermgmt.model.User;
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
+@Stateless
 public class UserServiceImpl extends BasisRessysServiceImpl<User>
 implements UserService {
 	
