@@ -16,6 +16,8 @@
  */
 package com.prodyna.pac.ressys.util;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
 
 import javax.enterprise.inject.Produces;
@@ -40,12 +42,17 @@ import javax.persistence.PersistenceContext;
  * </pre>
  */
 public class Resources {
+	/**
+	 * Constant for used hash algorithm.
+	 */
+	private static final String HASH_ALGORITHM_SHA_256 = "SHA-256";
+
 	// use @SuppressWarnings to tell IDE to ignore warnings about field not
 	// being referenced directly
 	@Produces
 	@PersistenceContext
 	private EntityManager em;
-	
+
 	private InitialContext initialContext;
 
 	public Resources() {
@@ -58,21 +65,32 @@ public class Resources {
 
 	@Produces
 	public Logger produceLog(InjectionPoint injectionPoint) {
-		return Logger.getLogger(injectionPoint.getMember()
-				.getDeclaringClass().getName());
+		return Logger.getLogger(injectionPoint.getMember().getDeclaringClass()
+				.getName());
 	}
 
 	@Produces
-	public InitialContext produceInitialContext(){
+	public InitialContext produceInitialContext() {
 		return initialContext;
 	}
-	
+
 	@Produces
-	public QueueConnectionFactory produceQueueConnectionFactory(){
+	public QueueConnectionFactory produceQueueConnectionFactory() {
 		try {
-			return (QueueConnectionFactory) produceInitialContext().lookup("ConnectionFactory");
+			return (QueueConnectionFactory) produceInitialContext().lookup(
+					"ConnectionFactory");
 		} catch (NamingException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	@Produces
+	public MessageDigest produceMessageDigest() {
+		try {
+			return MessageDigest.getInstance(HASH_ALGORITHM_SHA_256);
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(
+					"Can not create MessageDigest instance for "+HASH_ALGORITHM_SHA_256+".", e);
 		}
 	}
 }

@@ -20,6 +20,8 @@ import com.prodyna.pac.ressys.basis.security.AllAccess;
 import com.prodyna.pac.ressys.basis.security.Secured;
 import com.prodyna.pac.ressys.monitoring.logging.Logged;
 import com.prodyna.pac.ressys.monitoring.performance.Monitored;
+import com.prodyna.pac.ressys.usermgmt.exception.MultipleResultsForAUserException;
+import com.prodyna.pac.ressys.usermgmt.exception.UserNotFoundException;
 import com.prodyna.pac.ressys.usermgmt.model.User;
 
 /**
@@ -32,13 +34,13 @@ import com.prodyna.pac.ressys.usermgmt.model.User;
 @Monitored
 @Secured
 @Path("/user")
-public interface UserService{
+public interface UserService {
 	/**
 	 * persists the user in the database.
 	 * 
 	 * @param user
 	 *            the user object to persists in the database.
-	 * @return the with key information enriched user  object.
+	 * @return the with key information enriched user object.
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -60,6 +62,22 @@ public interface UserService{
 	@AllAccess
 	public User get(@PathParam("id") Long id);
 
+	
+	/**
+	 * reads the user identified by its login name from the database.
+	 * 
+	 * @param loginName
+	 *            login name of the user, which is to read.
+	 * 
+	 * @return from database read user object.
+	 */
+	@GET
+	@Path("/findByLoginName/{loginname}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@AllAccess
+	public User findByLoginName(@PathParam("loginname") String loginName) throws UserNotFoundException,
+	MultipleResultsForAUserException;
+
 	/**
 	 * reads all user from database.
 	 * 
@@ -74,8 +92,7 @@ public interface UserService{
 	 * persists changes on the user object in the database.
 	 * 
 	 * @param user
-	 *            the user object with updated properties, which are to
-	 *            persist.
+	 *            the user object with updated properties, which are to persist.
 	 * 
 	 * @return the updated user object.
 	 */
@@ -98,4 +115,33 @@ public interface UserService{
 	@Produces(MediaType.APPLICATION_JSON)
 	@AdminAccessOnly
 	public User delete(User user);
+
+	/**
+	 * search for a user by its login name and password. If in parameter
+	 * password provided value represents the a hash encrypted password then
+	 * passwordEncrypted should be set to true, else to false. If
+	 * passwordEncrypted is set to false, then the value in password parameter
+	 * will be used to calculate a hash value before the database request will
+	 * be executed.
+	 * 
+	 * @param loginName
+	 *            String with users login name to look for.
+	 * @param password
+	 *            password for the user look up. If passwordEncrypted is true,
+	 *            then a SHA-256 hash value for password with hex encoding is
+	 *            expected.
+	 * @param passwordEncrypted
+	 *            is true if the value in parameter password is a hash value,
+	 *            false if the password is provided in plane form.
+	 * @return a User instance if a user could be found in system by login name
+	 *         and password, null else.
+	 */
+	@POST
+	@Path("/findUser")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@AllAccess
+	public User findUser(String loginName, String password,
+			boolean passwordEncrypted) throws UserNotFoundException,
+			MultipleResultsForAUserException;
 }

@@ -14,12 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import com.prodyna.pac.ressys.aircraft.model.Aircraft;
 
 /**
  * Entity for user representation.
@@ -28,11 +27,44 @@ import com.prodyna.pac.ressys.aircraft.model.Aircraft;
  *
  */
 @Entity
-@NamedQueries({ @NamedQuery(name = User.SELECT_ALL_USER, query = "SELECT a FROM User a") })
-@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = {"id", "login_name"}))
-public class User implements Serializable{
-	
+@NamedQueries({
+		@NamedQuery(name = User.SELECT_ALL_USER, query = "SELECT a FROM User a"),
+		@NamedQuery(name = User.FIND_USER, query = "Select u FROM User u where u.login_name = :loginName and u.password = :password"),
+		@NamedQuery(name = User.FIND_USER_BY_LOGIN_NAME, query = "Select u FROM User u where u.login_name = :loginName") })
+@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = {
+		"id", "login_name", "password" }))
+public class User implements Serializable {
+
+	/**
+	 * Name of the query for select all user.
+	 */
 	public static final String SELECT_ALL_USER = "selectAllUser";
+
+	/**
+	 * Name of the query for find a user by login name and password;
+	 */
+	public static final String FIND_USER = "findUser";
+
+	/**
+	 * Name of parameter for login name in findUser query
+	 */
+	public static final String FIND_USER_PARAMETER_NAME_LOGIN_NAME = "loginName";
+
+	/**
+	 * Name of parameter for password in findUser query
+	 */
+	public static final String FIND_USER_PARAMETER_NAME_PASSWORD = "password";
+
+	/**
+	 * Name of the query for searching for a user by his/her login name.
+	 */
+	public static final String FIND_USER_BY_LOGIN_NAME = "findUserByLoginName";
+
+	/**
+	 * Name of parameter for login name in findUserByLoginName query
+	 */
+	public static final String FIND_USER_BY_LOGIN_NAME_PARAMETER_NAME_LOGIN_NAME = "loginName";
+
 
 	/**
 	 * generated value for serialization.
@@ -47,42 +79,43 @@ public class User implements Serializable{
 	@NotNull
 	private Long id;
 
-	
 	@NotNull
-	@Column(name="user_name")
-	@Size(min = 1, max= 20)
+	@Column(name = "user_name")
+	@Size(min = 1, max = 20)
 	private String userName;
-	
+
 	@NotNull
-	@Column(name="login_name")
-	@Size(min = 3, max= 20)
+	@Column(name = "login_name")
+	@Size(min = 3, max = 20)
 	private String loginName;
-	
+
 	@NotNull
-	@Size(min = 7, max= 20)
+	@Size(min = 7, max = 20)
 	private String password;
-	
+
 	@NotNull
-	@Column(name="email")
+	@Column(name = "email")
 	@Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
-            + "[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
-            + "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9]"
-            + "(?:[a-z0-9-]*[a-z0-9])?",
-            message = "Invalid eMail!")
+			+ "[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
+			+ "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9]"
+			+ "(?:[a-z0-9-]*[a-z0-9])?", message = "Invalid eMail!")
 	private String eMail;
-	
-	@Column(name="licence_id")
+
+	@Column(name = "licence_id")
 	private String licenceId;
-	
-	@Column(name="licence_valid_until_date")
+
+	@Column(name = "licence_valid_until_date")
 	private Date licenceValidUntilDate;
-	
+
+	@Transient
+	private boolean passwordEncrypted;
+
 	/**
 	 * 
 	 */
 	public User() {
 	}
-	
+
 	/**
 	 * @param userName
 	 * @param loginName
@@ -100,7 +133,7 @@ public class User implements Serializable{
 		this.licenceId = licenceId;
 		this.licenceValidUntilDate = licenceValidUntilDate;
 	}
-	
+
 	/**
 	 * @param id
 	 * @param userName
@@ -129,7 +162,8 @@ public class User implements Serializable{
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -143,7 +177,8 @@ public class User implements Serializable{
 	}
 
 	/**
-	 * @param userName the userName to set
+	 * @param userName
+	 *            the userName to set
 	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
@@ -157,7 +192,8 @@ public class User implements Serializable{
 	}
 
 	/**
-	 * @param loginName the loginName to set
+	 * @param loginName
+	 *            the loginName to set
 	 */
 	public void setLoginName(String loginName) {
 		this.loginName = loginName;
@@ -171,7 +207,8 @@ public class User implements Serializable{
 	}
 
 	/**
-	 * @param password the password to set
+	 * @param password
+	 *            the password to set
 	 */
 	public void setPassword(String password) {
 		this.password = password;
@@ -185,7 +222,8 @@ public class User implements Serializable{
 	}
 
 	/**
-	 * @param eMail the eMail to set
+	 * @param eMail
+	 *            the eMail to set
 	 */
 	public void seteMail(String eMail) {
 		this.eMail = eMail;
@@ -199,7 +237,8 @@ public class User implements Serializable{
 	}
 
 	/**
-	 * @param licenceId the licenceId to set
+	 * @param licenceId
+	 *            the licenceId to set
 	 */
 	public void setLicenceId(String licenceId) {
 		this.licenceId = licenceId;
@@ -213,24 +252,44 @@ public class User implements Serializable{
 	}
 
 	/**
-	 * @param licenceValidUntilDate the licenceValidUntilDate to set
+	 * @param licenceValidUntilDate
+	 *            the licenceValidUntilDate to set
 	 */
 	public void setLicenceValidUntilDate(Date licenceValidUntilDate) {
 		this.licenceValidUntilDate = licenceValidUntilDate;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * @return the passwordEncrypted
+	 */
+	public boolean isPasswordEncrypted() {
+		return passwordEncrypted;
+	}
+
+	/**
+	 * @param passwordEncrypted
+	 *            the passwordEncrypted to set
+	 */
+	public void setPasswordEncrypted(boolean passwordEncrypted) {
+		this.passwordEncrypted = passwordEncrypted;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "User [id=" + getId() + ", userName=" + userName + ", loginName="
-				+ loginName + ", password=" + password + ", eMail=" + eMail
-				+ ", licenceId=" + licenceId + ", licenceValidUntilDate="
-				+ licenceValidUntilDate + "]";
+		return "User [id=" + getId() + ", userName=" + userName
+				+ ", loginName=" + loginName + ", password=" + password
+				+ ", eMail=" + eMail + ", licenceId=" + licenceId
+				+ ", licenceValidUntilDate=" + licenceValidUntilDate + "]";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -254,7 +313,9 @@ public class User implements Serializable{
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
