@@ -21,7 +21,10 @@ import com.prodyna.pac.ressys.basis.security.Secured;
 import com.prodyna.pac.ressys.monitoring.logging.Logged;
 import com.prodyna.pac.ressys.monitoring.performance.Monitored;
 import com.prodyna.pac.ressys.usermgmt.exception.MultipleResultsForAUserException;
+import com.prodyna.pac.ressys.usermgmt.exception.RoleAlreadyAssignedException;
+import com.prodyna.pac.ressys.usermgmt.exception.RoleNotAssignedException;
 import com.prodyna.pac.ressys.usermgmt.exception.UserNotFoundException;
+import com.prodyna.pac.ressys.usermgmt.model.Role;
 import com.prodyna.pac.ressys.usermgmt.model.User;
 
 /**
@@ -62,22 +65,6 @@ public interface UserService {
 	@AllAccess
 	public User get(@PathParam("id") Long id);
 
-	
-	/**
-	 * reads the user identified by its login name from the database.
-	 * 
-	 * @param loginName
-	 *            login name of the user, which is to read.
-	 * 
-	 * @return from database read user object.
-	 */
-	@GET
-	@Path("/findByLoginName/{loginname}")
-	@Produces(MediaType.APPLICATION_JSON)
-	@AllAccess
-	public User findByLoginName(@PathParam("loginname") String loginName) throws UserNotFoundException,
-	MultipleResultsForAUserException;
-
 	/**
 	 * reads all user from database.
 	 * 
@@ -117,6 +104,21 @@ public interface UserService {
 	public User delete(User user);
 
 	/**
+	 * reads the user identified by its login name from the database.
+	 * 
+	 * @param loginName
+	 *            login name of the user, which is to read.
+	 * 
+	 * @return from database read user object.
+	 */
+	@GET
+	@Path("/findByLoginName/{loginname}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@AllAccess
+	public User findByLoginName(@PathParam("loginname") String loginName)
+			throws UserNotFoundException, MultipleResultsForAUserException;
+
+	/**
 	 * search for a user by its login name and password. If in parameter
 	 * password provided value represents the a hash encrypted password then
 	 * passwordEncrypted should be set to true, else to false. If
@@ -137,11 +139,62 @@ public interface UserService {
 	 *         and password, null else.
 	 */
 	@POST
-	@Path("/findUser")
+	@Path("/findUser/{loginName}/{passwordEncrypted}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@AllAccess
-	public User findUser(String loginName, String password,
-			boolean passwordEncrypted) throws UserNotFoundException,
-			MultipleResultsForAUserException;
+	public User findUser(@PathParam("loginName") String loginName,
+			String password,
+			@PathParam("passwordEncrypted") boolean passwordEncrypted)
+			throws UserNotFoundException, MultipleResultsForAUserException;
+
+	/**
+	 * adds a role to the user.
+	 * 
+	 * @param userId
+	 *            id of the user which have to get the new role assigned.
+	 * @param roleId
+	 *            id of the role which is to assign to the user.
+	 * @return true if the role was assigned to the user.
+	 * @throws RoleAlreadyAssignedException
+	 *             if the role already assigned to the user.
+	 */
+	@GET
+	@Path("/{userid:[0-9]+}/addRole/{roleid:[0-9]+}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@AdminAccessOnly
+	public boolean addRole(@PathParam("userid") Long userId,
+			@PathParam("roleid") Long roleId)
+			throws RoleAlreadyAssignedException;
+
+	/**
+	 * remove a role of a the user.
+	 * 
+	 * @param userId
+	 *            id of the user which role has to be removed.
+	 * @param roleId
+	 *            id of the role which is to remove from user.
+	 * @return true if the role was removed from user.
+	 * @throws RoleAlreadyAssignedException
+	 *             if the role already assigned to the user.
+	 */
+	@GET
+	@Path("/{userid:[0-9]+}/removeRole/{roleid:[0-9]+}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@AdminAccessOnly
+	public boolean removeRole(@PathParam("userid") Long userId,
+			@PathParam("roleid") Long roleId) throws RoleNotAssignedException;
+
+	/**
+	 * reads all roles of a user.
+	 * 
+	 * @param user
+	 *            user to get role for.
+	 * @return a list with all roles for given user.
+	 */
+	@GET
+	@Path("/{userid:[0-9]+}/getUserRoles")
+	@Produces(MediaType.APPLICATION_JSON)
+	@AllAccess
+	public List<Role> getRoles(@PathParam("userid") Long userId);
 }

@@ -29,10 +29,9 @@ import javax.validation.constraints.Size;
 @Entity
 @NamedQueries({
 		@NamedQuery(name = User.SELECT_ALL_USER, query = "SELECT a FROM User a"),
-		@NamedQuery(name = User.FIND_USER, query = "Select u FROM User u where u.login_name = :loginName and u.password = :password"),
-		@NamedQuery(name = User.FIND_USER_BY_LOGIN_NAME, query = "Select u FROM User u where u.login_name = :loginName") })
-@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"id", "login_name", "password" }))
+		@NamedQuery(name = User.FIND_USER, query = "Select u FROM User u where u.loginName = :loginName and u.password = :password"),
+		@NamedQuery(name = User.FIND_USER_BY_LOGIN_NAME, query = "Select u FROM User u where u.loginName = :loginName") })
+@Table(name = "user", uniqueConstraints = { @UniqueConstraint(name = "user_key", columnNames = { "login_name" }) })
 public class User implements Serializable {
 
 	/**
@@ -65,7 +64,6 @@ public class User implements Serializable {
 	 */
 	public static final String FIND_USER_BY_LOGIN_NAME_PARAMETER_NAME_LOGIN_NAME = "loginName";
 
-
 	/**
 	 * generated value for serialization.
 	 */
@@ -80,17 +78,12 @@ public class User implements Serializable {
 	private Long id;
 
 	@NotNull
-	@Column(name = "user_name")
-	@Size(min = 1, max = 20)
-	private String userName;
-
-	@NotNull
 	@Column(name = "login_name")
 	@Size(min = 3, max = 20)
 	private String loginName;
 
 	@NotNull
-	@Size(min = 7, max = 20)
+	@Size(min = 7)
 	private String password;
 
 	@NotNull
@@ -100,6 +93,11 @@ public class User implements Serializable {
 			+ "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9]"
 			+ "(?:[a-z0-9-]*[a-z0-9])?", message = "Invalid eMail!")
 	private String eMail;
+
+	@NotNull
+	@Column(name = "user_name")
+	@Size(min = 1, max = 20)
+	private String userName;
 
 	@Column(name = "licence_id")
 	private String licenceId;

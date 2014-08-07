@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -23,9 +25,31 @@ import com.prodyna.pac.ressys.usermgmt.model.User;
  */
 @IdClass(AircraftTypeToUserKey.class)
 @Entity
+@NamedQueries({
+		@NamedQuery(name = AircraftTypeToUser.FIND_AIRCRAFT_TYPE_FOR_USER, query = "SELECT attu.aircraftType FROM AircraftTypeToUser attu WHERE attu.user.id = :user_id"),
+		@NamedQuery(name = AircraftTypeToUser.FIND_USER_FOR_AIRCRAFT_TYPE, query = "SELECT attu.user FROM AircraftTypeToUser attu WHERE attu.aircraftType.id = :aircraft_type_id") })
 @Table(name = "aircraft_type_to_user", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"aircraft_type_id", "user_id" }))
 public class AircraftTypeToUser {
+
+	/**
+	 * Name of the find aircraft types for a user query.
+	 */
+	public static final String FIND_AIRCRAFT_TYPE_FOR_USER = "findAircraftTypeForUser";
+	/**
+	 * Parameter name for user id in find aircraft types for a user query.
+	 */
+	public static final String FIND_AIRCRAFT_TYPE_FOR_USER_PARAMETER_NAME_USER_ID = "user_id";
+
+	/**
+	 * Name of the find user for a aircraft type query.
+	 */
+	public static final String FIND_USER_FOR_AIRCRAFT_TYPE = "findUserForAircraftType";
+	/**
+	 * Parameter name for aircraft type id in find user for a aircraft type
+	 * query.
+	 */
+	public static final String FIND_USER_FOR_AIRCRAFT_TYPE_PARAMETER_NAME_AIRCRAFT_TYPE_ID = "aircraft_type_id";
 
 	@Id
 	@ManyToOne

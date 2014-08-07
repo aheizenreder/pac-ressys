@@ -14,10 +14,17 @@ import javax.xml.bind.DatatypeConverter;
 
 import com.prodyna.pac.ressys.basis.service.BasisRessysServiceImpl;
 import com.prodyna.pac.ressys.usermgmt.exception.MultipleResultsForAUserException;
+import com.prodyna.pac.ressys.usermgmt.exception.RoleAlreadyAssignedException;
+import com.prodyna.pac.ressys.usermgmt.exception.RoleNotAssignedException;
 import com.prodyna.pac.ressys.usermgmt.exception.UserNotFoundException;
+import com.prodyna.pac.ressys.usermgmt.model.Role;
 import com.prodyna.pac.ressys.usermgmt.model.User;
+import com.prodyna.pac.ressys.usermgmt.model.UserToRole;
+import com.prodyna.pac.ressys.usermgmt.model.UserToRoleKey;
 
 /**
+ * Implementation of the user service.
+ * 
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
@@ -31,6 +38,9 @@ public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 	@Inject
 	private MessageDigest messageDigest;
 
+	@Inject
+	private RoleService roleService;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -42,11 +52,8 @@ public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 	public User create(User user) {
 		log.info("persist user ...");
 		// encrypt user password before persist user.
-		if (!user.isPasswordEncrypted()) {
-			String encPassword = encryptPassword(user.getPassword());
-			user.setPassword(encPassword);
-			user.setPasswordEncrypted(true);
-		}
+		user = encryptPassword(user);
+
 		User persisted = createEntity(user);
 		return persisted;
 	}
@@ -62,9 +69,12 @@ public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 	public User get(Long id) {
 		log.info("get user by id: " + id + "...");
 		User us = getEntity(User.class, id);
+
 		// because while persisting the user the password was encrypted
 		// set passwordEncrypted to true
-		us.setPasswordEncrypted(true);
+		if (us != null) {
+			us.setPasswordEncrypted(true);
+		}
 
 		return us;
 	}
@@ -79,6 +89,17 @@ public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 		log.info("get all users ...");
 		List<User> resultList = getAllEntities(User.SELECT_ALL_USER);
 		log.info("found " + resultList.size() + " users.");
+		// set password encrypted flag to true for all found entities
+		for (User user : resultList) {
+			if (user != null) {
+				user.setPasswordEncrypted(true);
+			} else {
+				// this situation should not exist, but if an exception will be
+				// thrown
+				throw new NullPointerException(
+						"null value in user result list!");
+			}
+		}
 		return resultList;
 	}
 
@@ -92,6 +113,9 @@ public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 	@Override
 	public User update(User user) {
 		log.info("update user ..");
+
+		user = encryptPassword(user);
+
 		User updated = updateEntity(user);
 		return updated;
 	}
@@ -150,6 +174,7 @@ public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 		log.info("return only one expected ...");
 
 		User resultUser = resultList.get(0);
+		resultUser.setPasswordEncrypted(true);
 		log.info("END findUser().");
 		return resultUser;
 	}
@@ -181,22 +206,136 @@ public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 		return resultUser;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.prodyna.pac.ressys.usermgmt.service.UserService#addRole(com.prodyna
+	 * .pac.ressys.usermgmt.model.User,
+	 * com.prodyna.pac.ressys.usermgmt.model.Role)
+	 */
+	@Override
+	public boolean addRole(Long userId, Long roleId)
+			throws RoleAlreadyAssignedException {
+		log.info("START addRole() ...");
+
+		// get user from db
+		User user = get(userId);
+		// get role from db
+		Role role = roleService.get(roleId);
+
+		// check if the assignment already exists
+		List<Role> rolesList = getRoles(user.getId());
+		if (!rolesList.isEmpty() && rolesList.contains(role)) {
+			// the requested Role is already assigned to the user
+			// throw a exception.
+			log.severe("The requested assosiation already exists!");
+			throw new RoleAlreadyAssignedException(user, role);
+		}
+
+		// assign role to the user
+		UserToRole utr = new UserToRole(user, role);
+		getEntityManager().persist(utr);
+		getEntityManager().flush();
+
+		log.info("END addRole().");
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.prodyna.pac.ressys.usermgmt.service.UserService#removeRole(java.lang
+	 * .Long, java.lang.Long)
+	 */
+	@Override
+	public boolean removeRole(Long userId, Long roleId)
+			throws RoleNotAssignedException {
+		log.info("START removeRole() ...");
+
+		// get user from db
+		User user = get(userId);
+		// get role from db
+		Role role = roleService.get(roleId);
+
+		// check if the assignment already exists
+		List<Role> rolesList = getRoles(user.getId());
+		if (!rolesList.isEmpty() && !rolesList.contains(role)) {
+			// the requested Role is not assigned to the user
+			// throw a exception.
+			log.severe("The role to remove is not assigned to the user!");
+			throw new RoleNotAssignedException(user, role);
+		}
+
+		UserToRoleKey utrKey = new UserToRoleKey(user.getId(), role.getId());
+		UserToRole utr = getEntityManager().find(UserToRole.class, utrKey);
+		getEntityManager().remove(utr);
+		getEntityManager().flush();
+
+		log.info("END removeRole().");
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.prodyna.pac.ressys.usermgmt.service.UserService#getRoles(com.prodyna
+	 * .pac.ressys.usermgmt.model.User)
+	 */
+	@Override
+	public List<Role> getRoles(Long userId) {
+		log.info("START getRoles() ...");
+		TypedQuery<Role> findRolesForUser = getEntityManager()
+				.createNamedQuery(UserToRole.FIND_ROLES_FOR_USER, Role.class);
+		findRolesForUser.setParameter(
+				UserToRole.FIND_ROLES_FOR_USER_PARAMETER_NAME_USER_ID, userId);
+		List<Role> resultList = findRolesForUser.getResultList();
+
+		log.info("END getRoles().");
+		return resultList;
+	}
+
 	/**
-	 * This method encrypt a plane text password (String) with a hash algorithm
-	 * provided by injected MessageDigest instance. To check which hash
-	 * algorithm is used please check Ressources class.
+	 * This method check the encryption of the user password and if the password
+	 * is not encrypted, then encrypt a plane text password (String) with a hash
+	 * algorithm provided by injected MessageDigest instance. To check which
+	 * hash algorithm is used please check Resources class.
+	 * 
+	 * @param user
+	 *            User instance to check the password encryption.
+	 * @return User instance with encrypted and updated password.
+	 */
+	private User encryptPassword(User user) {
+
+		String resultPassword;
+
+		if (!user.isPasswordEncrypted()) {
+			resultPassword = encryptPassword(user.getPassword());
+			user.setPassword(resultPassword);
+			user.setPasswordEncrypted(true);
+		}
+
+		return user;
+	}
+
+	/**
+	 * this method encrypts a plane String with a hash algorithm provided by
+	 * injected MessageDigest.
 	 * 
 	 * @param planePassword
 	 *            a String to encrypt.
-	 * @return with a hash algorithm calculated hash value from planePassword.
+	 * @return hash encrypted value for planePassword.
 	 */
 	private String encryptPassword(String planePassword) {
+		String resultPassword;
 
 		byte[] digestPassword = messageDigest.digest(planePassword.getBytes());
-		String encryptedPassword = DatatypeConverter.printHexBinary(
-				digestPassword).toLowerCase();
+		resultPassword = DatatypeConverter.printHexBinary(digestPassword)
+				.toLowerCase();
 
-		return encryptedPassword;
+		return resultPassword;
 	}
 
 }

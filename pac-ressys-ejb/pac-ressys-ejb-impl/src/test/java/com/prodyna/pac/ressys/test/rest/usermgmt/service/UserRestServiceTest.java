@@ -4,6 +4,8 @@
 package com.prodyna.pac.ressys.test.rest.usermgmt.service;
 
 import java.net.URL;
+import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -15,12 +17,18 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.shrinkwrap.api.Archive;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.prodyna.pac.ressys.test.Deployments;
+import com.prodyna.pac.ressys.usermgmt.model.Role;
+import com.prodyna.pac.ressys.usermgmt.model.User;
+import com.prodyna.pac.ressys.usermgmt.service.RoleService;
+import com.prodyna.pac.ressys.usermgmt.service.UserService;
+import com.prodyna.pac.ressys.util.rest.RestClientProducer;
 
 /**
  * Unit test for User Service by its REST interface.
@@ -50,7 +58,6 @@ public class UserRestServiceTest {
 		RegisterBuiltin.register(ResteasyProviderFactory.getInstance());
 	}
 
-
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -72,11 +79,255 @@ public class UserRestServiceTest {
 	public void tearDown() throws Exception {
 	}
 
+	// @Test
+	// public void testInitUserSet() {
+	// log.info("START testInitUserSet() ...");
+	// Role guestRole = null;
+	// Role adminRole = null;
+	// Role userRole = null;
+	// boolean roleAssigned = false;
+	//
+	// Exception unexpectedException = null;
+	// Exception expectedException = null;
+	//
+	// log.info("Create UserService from url " + deploymentURL.toString()
+	// + "rest");
+	// UserService userService = RestClientProducer.createServiceClient(
+	// deploymentURL.toString() + "rest", UserService.class);
+	//
+	// RoleService roleService = RestClientProducer.createServiceClient(
+	// deploymentURL.toString() + "rest", RoleService.class);
+	//
+	// List<User> startUserList = userService.getAll();
+	// int startUserListSize = startUserList.size();
+	// log.info("start user list size " + startUserListSize);
+	//
+	// log.info("create guest user ...");
+	// User guestUser = new User("Guest", "guest", "guest",
+	// "guest@example.com", null, null);
+	// guestUser = userService.create(guestUser);
+	// Assert.assertNotNull("User id may not be null after persist!",
+	// guestUser.getId());
+	//
+	// List<Role> roleList = roleService.getAll();
+	// if (roleList != null && !roleList.isEmpty()) {
+	// for (Role currentRole : roleList) {
+	// String currentRoleName = currentRole.getRole();
+	// if ("Guest".equals(currentRoleName)) {
+	// log.info("Found guest role in role list");
+	// guestRole = currentRole;
+	// } else if ("User".equals(currentRoleName)) {
+	// log.info("Found user role in role list");
+	// userRole = currentRole;
+	// } else if ("Admin".equals(currentRoleName)) {
+	// log.info("Found admin role in role list");
+	// adminRole = currentRole;
+	// } else {
+	// log.info("Unknown role " + currentRoleName
+	// + " found in role list!");
+	// }
+	// }
+	// }
+	//
+	// log.info("assign guest role to guest user ...");
+	// try {
+	// roleAssigned = userService.addRole(guestUser, guestRole);
+	// } catch (Exception e) {
+	// log.log(Level.SEVERE, e.getMessage(), e);
+	// unexpectedException = e;
+	// }
+	// Assert.assertNull("Unexpected exception was thrown!",
+	// unexpectedException);
+	// Assert.assertTrue("Guest role was not assigned to guest user!",
+	// roleAssigned);
+	//
+	// log.info("try to assign guest role to guest user ...");
+	// try {
+	// roleAssigned = userService.addRole(guestUser, guestRole);
+	// } catch (RoleAlreadyAssignedException e) {
+	// log.info("Expected exception RoleAlreadyAssignedException was catched as expected: "+e.getMessage());
+	// expectedException = e;
+	// }
+	// Assert.assertNotNull("An exception was expected!", expectedException);
+	// Assert.assertFalse("Because the role is already assigned!",
+	// roleAssigned);
+	//
+	//
+	// log.info("END testInitUserSet().");
+	// }
+
 	@Test
-	public void testUserRestService() {
+	public void testUserRestService() throws Exception {
 		log.info("START testUserRestService() ...");
-		
+		Role guestRole = null;
+		Role userRole = null;
+		boolean roleAssigned = false;
+
+		log.info("Create UserService from url " + deploymentURL.toString()
+				+ "rest");
+
+		UserService userService = RestClientProducer.createServiceClient(
+				deploymentURL.toString() + "rest", UserService.class);
+
+		RoleService roleService = RestClientProducer.createServiceClient(
+				deploymentURL.toString() + "rest", RoleService.class);
+
+		// try to clean up before running test
+		// if last run was not able to delete created objects
+		// try to get them and remove
+		try {
+			User oldUser = userService.findByLoginName("test");
+			if (oldUser != null) {
+				// old user is still there
+				// get possible Role assignments
+				List<Role> oldRolesList = userService.getRoles(oldUser.getId());
+				for (Role oldRole : oldRolesList) {
+					boolean oldRoleAssgnmentRemoved = userService.removeRole(
+							oldUser.getId(), oldRole.getId());
+					Assert.assertTrue("Old role " + oldRole.getRole()
+							+ " can not be removed from assignment!",
+							oldRoleAssgnmentRemoved);
+				}
+				// delete the user
+				userService.delete(oldUser);
+			}
+		} catch (Exception e) {
+			log.log(Level.INFO, "user for clean up not found.", e);
+		}
+
+		List<User> startUserList = userService.getAll();
+		int startUserListSize = startUserList.size();
+		log.info("start user list size " + startUserListSize);
+
+		log.info("create test user ...");
+		User testUser = new User("Test", "test", "testTest",
+				"test@example.com", null, null);
+		testUser = userService.create(testUser);
+		Assert.assertNotNull("User id may not be null after persist!",
+				testUser.getId());
+
+		List<Role> roleList = roleService.getAll();
+		if (roleList != null && !roleList.isEmpty()) {
+			for (Role currentRole : roleList) {
+				String currentRoleName = currentRole.getRole();
+				if ("Guest".equals(currentRoleName)) {
+					log.info("Found guest role in role list");
+					guestRole = currentRole;
+				} else if ("User".equals(currentRoleName)) {
+					log.info("Found user role in role list");
+					userRole = currentRole;
+				} else if ("Admin".equals(currentRoleName)) {
+					log.info("Found admin role in role list");
+				} else {
+					log.info("Unknown role " + currentRoleName
+							+ " found in role list!");
+				}
+			}
+		}
+
+		log.info("assign guest role to test user ...");
+		try {
+			roleAssigned = userService.addRole(testUser.getId(),
+					guestRole.getId());
+		} catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+			Assert.fail("Exception by setting role to user!");
+		}
+
+		Assert.assertTrue("Guest role was not assigned to guest user!",
+				roleAssigned);
+
+		log.info("try to assign guest role to test user again ...");
+		Exception expectedException = null;
+		roleAssigned = false;
+		try {
+			roleAssigned = userService.addRole(testUser.getId(),
+					guestRole.getId());
+		} catch (Exception e) {
+			log.info("Expected exception RoleAlreadyAssignedException was catched as expected: "
+					+ e.getMessage());
+			expectedException = e;
+		}
+		Assert.assertNotNull("An exception was expected!", expectedException);
+		Assert.assertFalse("Because the role is already assigned!",
+				roleAssigned);
+
+		log.info("try to add second role to the test user");
+		roleAssigned = false;
+		try {
+			roleAssigned = userService.addRole(testUser.getId(),
+					userRole.getId());
+		} catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+			Assert.fail("Unexpected exception while add second role to test user: "
+					+ e.getMessage());
+		}
+		Assert.assertTrue("User role was not assigned to the test user!",
+				roleAssigned);
+
+		log.info("get user by its id ...");
+		User userById = userService.get(testUser.getId());
+		Assert.assertEquals("User found by id is not equal!", testUser,
+				userById);
+		Assert.assertTrue("Wrong value in isPasswordEncrypt!",
+				userById.isPasswordEncrypted());
+
+		log.info("update users name ...");
+		testUser.setUserName("Test Test");
+		userService.update(testUser);
+		userById = userService.get(testUser.getId());
+		Assert.assertTrue("User not equals after update",
+				testUser.equals(userById));
+
+		log.info("get user by its login name ...");
+		User userByLoginName = userService.findByLoginName(testUser
+				.getLoginName());
+		Assert.assertEquals("User found by login name is not equal!", testUser,
+				userByLoginName);
+		Assert.assertTrue("Wrong value in isPasswordEncrypt!",
+				userById.isPasswordEncrypted());
+
+		log.info("try to get user by its login name and password (encrypted) ...");
+		User userByLoginAndPassword = userService.findUser(
+				testUser.getLoginName(), testUser.getPassword(),
+				testUser.isPasswordEncrypted());
+		Assert.assertEquals(
+				"User found by login and password is not the same!", testUser,
+				userByLoginAndPassword);
+		Assert.assertTrue("Wrong value in isPasswordEncrypt!",
+				userByLoginAndPassword.isPasswordEncrypted());
+
+		log.info("try to get user by its login name and password (plane) ...");
+		User userByLoginAndPasswordPlane = userService.findUser(
+				testUser.getLoginName(), "testTest", false);
+		Assert.assertEquals(
+				"User found by login and plane password is not the same!",
+				testUser, userByLoginAndPasswordPlane);
+		Assert.assertTrue("Wrong value in isPasswordEncrypt!",
+				userByLoginAndPasswordPlane.isPasswordEncrypted());
+
+		log.info("get all roles for user");
+		List<Role> userRoleList = userService.getRoles(testUser.getId());
+		Assert.assertEquals("Wrong number of roles!", 2, userRoleList.size());
+
+		log.info("get all users ...");
+		List<User> userList = userService.getAll();
+		Assert.assertEquals("Wrong number of user in list!",
+				startUserListSize + 1, userList.size());
+
+		log.info("remove roles from user ...");
+		for (Role role : userRoleList) {
+			boolean roleRemoved = userService.removeRole(testUser.getId(),
+					role.getId());
+			Assert.assertTrue("Role" + role.getRole() + " can not be removed!",
+					roleRemoved);
+		}
+
+		log.info("delete test user ...");
+		userService.delete(testUser);
+		User deletedUser = userService.get(testUser.getId());
+		Assert.assertNull("User have to be null in the database!", deletedUser);
+
 		log.info("END testUserRestService().");
 	}
-
 }

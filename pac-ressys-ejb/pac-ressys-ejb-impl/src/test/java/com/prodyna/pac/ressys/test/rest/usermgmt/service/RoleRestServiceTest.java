@@ -39,8 +39,12 @@ public class RoleRestServiceTest {
 
 	private Logger log = Logger.getLogger(RoleRestServiceTest.class.getName());
 
+	private RoleService roleService;
+
 	@ArquillianResource
 	private URL deploymentURL;
+
+	private int startListSize;
 
 	@Deployment(testable = false)
 	public static Archive<?> createDeployment() {
@@ -67,6 +71,13 @@ public class RoleRestServiceTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+
+		roleService = RestClientProducer.createServiceClient(
+				deploymentURL.toString() + "rest", RoleService.class);
+
+		List<Role> roleList = roleService.getAll();
+		startListSize = roleList.size();
+
 	}
 
 	/**
@@ -76,40 +87,62 @@ public class RoleRestServiceTest {
 	public void tearDown() throws Exception {
 	}
 
+//	@Test
+//	public void testInitAircraftRestService() {
+//		log.info("START testInitAircraftRestService() ...");
+//
+//		Assert.assertNotNull("RoleService instance is null!", roleService);
+//
+//		// crate Admin role
+//		Role adminRole = new Role("Admin");
+//		adminRole = roleService.create(adminRole);
+//		Assert.assertNotNull("Id of Role may not be null after persist!",
+//				adminRole.getId());
+//
+//		// create User role
+//		Role userRole = new Role("User");
+//		userRole = roleService.create(userRole);
+//
+//		Assert.assertNotNull("Id of Role may not be null after persist!",
+//				userRole.getId());
+//
+//		// create Guest Role
+//		Role guestRole = new Role("Guest");
+//		guestRole = roleService.create(guestRole);
+//
+//		Role dbRole = roleService.get(userRole.getId());
+//		Assert.assertEquals(userRole, dbRole);
+//
+//		// test getAll
+//		List<Role> newRoleList = roleService.getAll();
+//		Assert.assertEquals(startListSize + 3, newRoleList.size());
+//
+//		log.info("END testInitAircraftRestService().");
+//	}
+
 	@Test
 	public void testAircraftRestService() {
 
 		log.info("START test role service ...");
 
-		RoleService roleService = RestClientProducer.createServiceClient(
-				deploymentURL.toString() + "rest", RoleService.class);
-
-		List<Role> roleList = roleService.getAll();
-		int startListSize = roleList.size();
-
-		// crate Admin role
-		Role adminRole = new Role("Admin");
-		adminRole = roleService.create(adminRole);
+		// create Test role
+		Role testRole = new Role("Test");
+		testRole = roleService.create(testRole);
 		Assert.assertNotNull("Id of Role may not be null after persist!",
-				adminRole.getId());
+				testRole.getId());
 
-		// create User role
-		Role userRole = new Role("User");
-		userRole = roleService.create(userRole);
+		Role dbRole = roleService.get(testRole.getId());
+		Assert.assertEquals(testRole, dbRole);
 
-		Assert.assertNotNull("Id of Role may not be null after persist!",
-				userRole.getId());
-
-		// create Guest Role
-		Role guestRole = new Role("Guest");
-		guestRole = roleService.create(guestRole);
-
-		Role dbRole = roleService.get(userRole.getId());
-		Assert.assertEquals(userRole, dbRole);
+		testRole.setRole("Test1");
+		roleService.update(testRole);
+		dbRole = roleService.get(testRole.getId());
+		Assert.assertEquals("Role is not the same after update!", testRole,
+				dbRole);
 
 		// test getAll
 		List<Role> newRoleList = roleService.getAll();
-		Assert.assertEquals(startListSize + 3, newRoleList.size());
+		Assert.assertEquals(startListSize + 1, newRoleList.size());
 
 		log.info("END test role service.");
 	}

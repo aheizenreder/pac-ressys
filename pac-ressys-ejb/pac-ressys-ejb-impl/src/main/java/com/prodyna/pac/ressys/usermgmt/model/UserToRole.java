@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -19,24 +21,46 @@ import javax.persistence.UniqueConstraint;
  */
 @IdClass(UserToRoleKey.class)
 @Entity
-@Table(name="user_to_role", uniqueConstraints=@UniqueConstraint(columnNames={"user_id", "role_id"}))
+@NamedQueries({
+		@NamedQuery(name = UserToRole.FIND_ROLES_FOR_USER, query = "SELECT ur.role FROM UserToRole ur WHERE ur.user.id = :user_id"),
+		@NamedQuery(name = UserToRole.FIND_USER_FOR_ROLE, query = "SELECT ur.user FROM UserToRole ur WHERE ur.role.id = :role_id") })
+@Table(name = "user_to_role", uniqueConstraints = @UniqueConstraint(columnNames = {
+		"user_id", "role_id" }))
 public class UserToRole {
+
+	/**
+	 * Query name for find roles for user query.
+	 */
+	public static final String FIND_ROLES_FOR_USER = "findRolesForUser";
+	/**
+	 * Parameter name for user id in find roles for user query.
+	 */
+	public static final String FIND_ROLES_FOR_USER_PARAMETER_NAME_USER_ID = "user_id";
+
+	/**
+	 * Query name for find user for a role query.
+	 */
+	public static final String FIND_USER_FOR_ROLE = "findUserForRole";
+	/**
+	 * Parameter name for role id in find user for role query.
+	 */
+	public static final String FIND_USER_FOR_ROLE_PARAMETER_NAME_ROLE_ID = "role_id";
 
 	@Id
 	@ManyToOne
-	@JoinColumn(name="user_id", referencedColumnName="id")
+	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;
 
 	@Id
 	@ManyToOne
-	@JoinColumn(name="role_id", referencedColumnName="id")
+	@JoinColumn(name = "role_id", referencedColumnName = "id")
 	private Role role;
-	
-	public UserToRole(){
-		
+
+	public UserToRole() {
+
 	}
-	
-	public UserToRole(User user, Role role){
+
+	public UserToRole(User user, Role role) {
 		this.user = user;
 		this.role = role;
 	}
@@ -49,7 +73,8 @@ public class UserToRole {
 	}
 
 	/**
-	 * @param user the user to set
+	 * @param user
+	 *            the user to set
 	 */
 	public void setUser(User user) {
 		this.user = user;
@@ -63,13 +88,16 @@ public class UserToRole {
 	}
 
 	/**
-	 * @param role the role to set
+	 * @param role
+	 *            the role to set
 	 */
 	public void setRole(Role role) {
 		this.role = role;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -77,7 +105,9 @@ public class UserToRole {
 		return "UserToRole [user=" + user + ", role=" + role + "]";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -89,7 +119,9 @@ public class UserToRole {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -113,6 +145,5 @@ public class UserToRole {
 			return false;
 		return true;
 	}
-	
-	
+
 }
