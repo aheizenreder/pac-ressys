@@ -279,10 +279,11 @@ public class User implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "User [id=" + getId() + ", userName=" + userName
-				+ ", loginName=" + loginName + ", password=" + password
-				+ ", eMail=" + eMail + ", licenceId=" + licenceId
-				+ ", licenceValidUntilDate=" + licenceValidUntilDate + "]";
+		return "User [id=" + id + ", loginName=" + loginName + ", password="
+				+ password + ", eMail=" + eMail + ", userName=" + userName
+				+ ", licenceId=" + licenceId + ", licenceValidUntilDate="
+				+ licenceValidUntilDate + ", passwordEncrypted="
+				+ passwordEncrypted + "]";
 	}
 
 	/*
@@ -295,7 +296,7 @@ public class User implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((eMail == null) ? 0 : eMail.hashCode());
-		result = prime * result + (int) (getId() ^ (getId() >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((licenceId == null) ? 0 : licenceId.hashCode());
 		result = prime
@@ -306,6 +307,7 @@ public class User implements Serializable {
 				+ ((loginName == null) ? 0 : loginName.hashCode());
 		result = prime * result
 				+ ((password == null) ? 0 : password.hashCode());
+		result = prime * result + (passwordEncrypted ? 1231 : 1237);
 		result = prime * result
 				+ ((userName == null) ? 0 : userName.hashCode());
 		return result;
@@ -330,7 +332,10 @@ public class User implements Serializable {
 				return false;
 		} else if (!eMail.equals(other.eMail))
 			return false;
-		if (getId() != other.getId())
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (licenceId == null) {
 			if (other.licenceId != null)
@@ -351,6 +356,8 @@ public class User implements Serializable {
 			if (other.password != null)
 				return false;
 		} else if (!password.equals(other.password))
+			return false;
+		if (passwordEncrypted != other.passwordEncrypted)
 			return false;
 		if (userName == null) {
 			if (other.userName != null)

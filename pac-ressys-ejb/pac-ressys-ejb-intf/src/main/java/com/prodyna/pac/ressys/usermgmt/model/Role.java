@@ -21,11 +21,12 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @NamedQueries({ @NamedQuery(name = Role.SELECT_ALL_ROLE, query = "SELECT a FROM Role a") })
-@Table(name = "role", uniqueConstraints = @UniqueConstraint(columnNames = {"id", "role"}))
-public class Role implements Serializable{
+@Table(name = "role", uniqueConstraints = @UniqueConstraint(columnNames = {
+		"id", "role" }))
+public class Role implements Serializable {
 
 	public static final String SELECT_ALL_ROLE = "selectAllRole";
-	
+
 	/**
 	 * generated uid for serialization.
 	 */
@@ -41,7 +42,7 @@ public class Role implements Serializable{
 
 	@NotNull
 	private String role;
-	
+
 	/**
 	 * 
 	 */
@@ -72,7 +73,8 @@ public class Role implements Serializable{
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -86,33 +88,40 @@ public class Role implements Serializable{
 	}
 
 	/**
-	 * @param role the role to set
+	 * @param role
+	 *            the role to set
 	 */
 	public void setRole(String role) {
 		this.role = role;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Role [id=" + getId() + ", role=" + role + "]";
+		return "Role [id=" + id + ", role=" + role + "]";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (getId() ^ (getId() >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((role == null) ? 0 : role.hashCode());
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -124,7 +133,10 @@ public class Role implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		Role other = (Role) obj;
-		if (getId() != other.getId())
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (role == null) {
 			if (other.role != null)
@@ -133,8 +145,4 @@ public class Role implements Serializable{
 			return false;
 		return true;
 	}
-	
-	
-	
-	
 }

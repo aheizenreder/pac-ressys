@@ -110,7 +110,7 @@ public class AircraftType implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "AircraftType [id=" + getId() + ", typeName=" + typeName + "]";
+		return "AircraftType [id=" + id + ", typeName=" + typeName + "]";
 	}
 
 	/*
@@ -122,7 +122,7 @@ public class AircraftType implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (getId() ^ (getId() >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((typeName == null) ? 0 : typeName.hashCode());
 		return result;
@@ -142,7 +142,10 @@ public class AircraftType implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		AircraftType other = (AircraftType) obj;
-		if (getId() != other.getId())
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (typeName == null) {
 			if (other.typeName != null)

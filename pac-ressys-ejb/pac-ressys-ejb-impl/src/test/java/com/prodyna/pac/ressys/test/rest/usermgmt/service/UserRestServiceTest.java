@@ -4,6 +4,7 @@
 package com.prodyna.pac.ressys.test.rest.usermgmt.service;
 
 import java.net.URL;
+import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,10 +41,15 @@ import com.prodyna.pac.ressys.util.rest.RestClientProducer;
 @RunAsClient
 public class UserRestServiceTest {
 
-	private Logger log = Logger.getLogger(UserRestServiceTest.class.getName());
+	private static Logger log = Logger.getLogger(UserRestServiceTest.class
+			.getName());
+
+	private Role guestRole;
+	private Role adminRole;
+	private Role userRole;
 
 	@ArquillianResource
-	private URL deploymentURL;
+	private static URL deploymentURL;
 
 	@Deployment(testable = false)
 	public static Archive<?> createDeployment() {
@@ -70,6 +76,27 @@ public class UserRestServiceTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		RoleService roleService = RestClientProducer.createServiceClient(
+				deploymentURL.toString() + "rest", RoleService.class);
+		List<Role> roleList = roleService.getAll();
+		if (roleList != null && !roleList.isEmpty()) {
+			for (Role currentRole : roleList) {
+				String currentRoleName = currentRole.getRole();
+				if ("Guest".equals(currentRoleName)) {
+					log.info("Found guest role in role list");
+					guestRole = currentRole;
+				} else if ("User".equals(currentRoleName)) {
+					log.info("Found user role in role list");
+					userRole = currentRole;
+				} else if ("Admin".equals(currentRoleName)) {
+					log.info("Found admin role in role list");
+					adminRole = currentRole;
+				} else {
+					log.info("Unknown role " + currentRoleName
+							+ " found in role list!");
+				}
+			}
+		}
 	}
 
 	/**
@@ -79,89 +106,12 @@ public class UserRestServiceTest {
 	public void tearDown() throws Exception {
 	}
 
-	// @Test
-	// public void testInitUserSet() {
-	// log.info("START testInitUserSet() ...");
-	// Role guestRole = null;
-	// Role adminRole = null;
-	// Role userRole = null;
-	// boolean roleAssigned = false;
-	//
-	// Exception unexpectedException = null;
-	// Exception expectedException = null;
-	//
-	// log.info("Create UserService from url " + deploymentURL.toString()
-	// + "rest");
-	// UserService userService = RestClientProducer.createServiceClient(
-	// deploymentURL.toString() + "rest", UserService.class);
-	//
-	// RoleService roleService = RestClientProducer.createServiceClient(
-	// deploymentURL.toString() + "rest", RoleService.class);
-	//
-	// List<User> startUserList = userService.getAll();
-	// int startUserListSize = startUserList.size();
-	// log.info("start user list size " + startUserListSize);
-	//
-	// log.info("create guest user ...");
-	// User guestUser = new User("Guest", "guest", "guest",
-	// "guest@example.com", null, null);
-	// guestUser = userService.create(guestUser);
-	// Assert.assertNotNull("User id may not be null after persist!",
-	// guestUser.getId());
-	//
-	// List<Role> roleList = roleService.getAll();
-	// if (roleList != null && !roleList.isEmpty()) {
-	// for (Role currentRole : roleList) {
-	// String currentRoleName = currentRole.getRole();
-	// if ("Guest".equals(currentRoleName)) {
-	// log.info("Found guest role in role list");
-	// guestRole = currentRole;
-	// } else if ("User".equals(currentRoleName)) {
-	// log.info("Found user role in role list");
-	// userRole = currentRole;
-	// } else if ("Admin".equals(currentRoleName)) {
-	// log.info("Found admin role in role list");
-	// adminRole = currentRole;
-	// } else {
-	// log.info("Unknown role " + currentRoleName
-	// + " found in role list!");
-	// }
-	// }
-	// }
-	//
-	// log.info("assign guest role to guest user ...");
-	// try {
-	// roleAssigned = userService.addRole(guestUser, guestRole);
-	// } catch (Exception e) {
-	// log.log(Level.SEVERE, e.getMessage(), e);
-	// unexpectedException = e;
-	// }
-	// Assert.assertNull("Unexpected exception was thrown!",
-	// unexpectedException);
-	// Assert.assertTrue("Guest role was not assigned to guest user!",
-	// roleAssigned);
-	//
-	// log.info("try to assign guest role to guest user ...");
-	// try {
-	// roleAssigned = userService.addRole(guestUser, guestRole);
-	// } catch (RoleAlreadyAssignedException e) {
-	// log.info("Expected exception RoleAlreadyAssignedException was catched as expected: "+e.getMessage());
-	// expectedException = e;
-	// }
-	// Assert.assertNotNull("An exception was expected!", expectedException);
-	// Assert.assertFalse("Because the role is already assigned!",
-	// roleAssigned);
-	//
-	//
-	// log.info("END testInitUserSet().");
-	// }
-
 	@Test
-	public void testUserRestService() throws Exception {
-		log.info("START testUserRestService() ...");
-		Role guestRole = null;
-		Role userRole = null;
+	public void testInitUserSet() {
+		log.info("START testInitUserSet() ...");
 		boolean roleAssigned = false;
+
+		Exception unexpectedException = null;
 
 		log.info("Create UserService from url " + deploymentURL.toString()
 				+ "rest");
@@ -169,8 +119,141 @@ public class UserRestServiceTest {
 		UserService userService = RestClientProducer.createServiceClient(
 				deploymentURL.toString() + "rest", UserService.class);
 
-		RoleService roleService = RestClientProducer.createServiceClient(
-				deploymentURL.toString() + "rest", RoleService.class);
+		List<User> startUserList = userService.getAll();
+		int startUserListSize = startUserList.size();
+		log.info("start user list size " + startUserListSize);
+
+		log.info("create user guest ...");
+		User existingGuestUser = null;
+		try {
+			existingGuestUser = userService.findByLoginName("guest");
+		} catch (Exception e) {
+			log.log(Level.SEVERE,
+					"User guest does not exist: " + e.getMessage(), e);
+		}
+		if (existingGuestUser == null) {
+			// guest user does not exist
+			// --> create one
+			User guestUser = new User("Guest", "guest", "guestGuest",
+					"guest@example.com", null, null);
+			guestUser.setPasswordEncrypted(false);
+
+			guestUser = userService.create(guestUser);
+			Assert.assertNotNull("User id may not be null after persist!",
+					guestUser.getId());
+
+			log.info("assign guest role to guest user ...");
+			try {
+				roleAssigned = userService.addRole(guestUser.getId(),
+						guestRole.getId());
+			} catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage(), e);
+				unexpectedException = e;
+			}
+			Assert.assertNull("Unexpected exception was thrown!",
+					unexpectedException);
+			Assert.assertTrue("Guest role was not assigned to guest user!",
+					roleAssigned);
+		} else {
+			log.info("The user guest already exists!");
+		}
+
+		log.info("create user andreas");
+		User existingAndreasUser = null;
+		try {
+			existingAndreasUser = userService.findByLoginName("andreas");
+		} catch (Exception e) {
+			log.log(Level.SEVERE,
+					"user andreas was not found: " + e.getMessage(), e);
+		}
+
+		if (existingAndreasUser == null) {
+			// guest user does not exist
+			// --> create one
+			Calendar licenceValidDateCalendar = Calendar.getInstance();
+			licenceValidDateCalendar.set(2024, Calendar.MAY, 28, 0, 0, 0);
+			licenceValidDateCalendar.set(Calendar.MILLISECOND, 0);
+
+			User andreasUser = new User("Andreas", "andreas", "andreasAndreas",
+					"aheizenreder@prodyna.com", "AH270578",
+					licenceValidDateCalendar.getTime());
+			andreasUser.setPasswordEncrypted(false);
+
+			andreasUser = userService.create(andreasUser);
+			Assert.assertNotNull("User id may not be null after persist!",
+					andreasUser.getId());
+
+			log.info("assign admin role to user andreas ...");
+			try {
+				roleAssigned = userService.addRole(andreasUser.getId(),
+						adminRole.getId());
+			} catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage(), e);
+				unexpectedException = e;
+			}
+			Assert.assertNull("Unexpected exception was thrown!",
+					unexpectedException);
+			Assert.assertTrue("Admin role was not assigned to user andreas!",
+					roleAssigned);
+		} else {
+			log.info("The user andreas already exists!");
+		}
+
+		log.info("create user pilot ...");
+		User existingPilotUser = null;
+		try {
+			existingPilotUser = userService.findByLoginName("pilot");
+		} catch (Exception e) {
+			log.log(Level.SEVERE,
+					"User pilot does not exists: " + e.getMessage(), e);
+		}
+
+		if (existingPilotUser == null) {
+			// guest user does not exist
+			// --> create one
+			Calendar licenceValidDateCalendar = Calendar.getInstance();
+			licenceValidDateCalendar.set(2020, Calendar.NOVEMBER, 30, 0, 0, 0);
+			licenceValidDateCalendar.set(Calendar.MILLISECOND, 0);
+
+			User pilotUser = new User("Pilot", "pilot", "pilotPilot",
+					"pilot@example.com", "PL011181",
+					licenceValidDateCalendar.getTime());
+			pilotUser.setPasswordEncrypted(false);
+
+			pilotUser = userService.create(pilotUser);
+			Assert.assertNotNull("User id may not be null after persist!",
+					pilotUser.getId());
+
+			log.info("assign user role to user pilot ...");
+			try {
+				roleAssigned = userService.addRole(pilotUser.getId(),
+						userRole.getId());
+			} catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage(), e);
+				unexpectedException = e;
+			}
+			Assert.assertNull("Unexpected exception was thrown!",
+					unexpectedException);
+			Assert.assertTrue("User role was not assigned to user pilot!",
+					roleAssigned);
+		} else {
+			log.info("The user pilot already exists!");
+		}
+
+		log.info("END testInitUserSet().");
+	}
+
+	@Test
+	public void testUserRestService() throws Exception {
+		log.info("START testUserRestService() ...");
+
+		boolean roleAssigned = false;
+
+		log.info("Create UserService from url " + deploymentURL.toString()
+				+ "rest");
+
+		UserService userService = RestClientProducer.createServiceClient(
+				deploymentURL.toString() + "rest", UserService.class);
 
 		// try to clean up before running test
 		// if last run was not able to delete created objects
@@ -205,25 +288,6 @@ public class UserRestServiceTest {
 		testUser = userService.create(testUser);
 		Assert.assertNotNull("User id may not be null after persist!",
 				testUser.getId());
-
-		List<Role> roleList = roleService.getAll();
-		if (roleList != null && !roleList.isEmpty()) {
-			for (Role currentRole : roleList) {
-				String currentRoleName = currentRole.getRole();
-				if ("Guest".equals(currentRoleName)) {
-					log.info("Found guest role in role list");
-					guestRole = currentRole;
-				} else if ("User".equals(currentRoleName)) {
-					log.info("Found user role in role list");
-					userRole = currentRole;
-				} else if ("Admin".equals(currentRoleName)) {
-					log.info("Found admin role in role list");
-				} else {
-					log.info("Unknown role " + currentRoleName
-							+ " found in role list!");
-				}
-			}
-		}
 
 		log.info("assign guest role to test user ...");
 		try {

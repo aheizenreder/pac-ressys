@@ -174,7 +174,9 @@ public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 		log.info("return only one expected ...");
 
 		User resultUser = resultList.get(0);
-		resultUser.setPasswordEncrypted(true);
+		if (resultUser != null) {
+			resultUser.setPasswordEncrypted(true);
+		}
 		log.info("END findUser().");
 		return resultUser;
 	}
@@ -202,6 +204,10 @@ public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 		log.info("return only one expected ...");
 
 		User resultUser = resultList.get(0);
+		if (resultUser != null) {
+			resultUser.setPasswordEncrypted(true);
+		}
+
 		log.info("END findUser().");
 		return resultUser;
 	}

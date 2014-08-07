@@ -135,7 +135,7 @@ public class Aircraft implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "Aircraft [id=" + getId() + ", aircraftType=" + aircraftType
+		return "Aircraft [id=" + id + ", aircraftType=" + aircraftType
 				+ ", aircraftName=" + aircraftName + "]";
 	}
 
@@ -152,7 +152,7 @@ public class Aircraft implements Serializable {
 				+ ((aircraftName == null) ? 0 : aircraftName.hashCode());
 		result = prime * result
 				+ ((aircraftType == null) ? 0 : aircraftType.hashCode());
-		result = prime * result + (int) (getId() ^ (getId() >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -180,7 +180,10 @@ public class Aircraft implements Serializable {
 				return false;
 		} else if (!aircraftType.equals(other.aircraftType))
 			return false;
-		if (getId() != other.getId())
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
