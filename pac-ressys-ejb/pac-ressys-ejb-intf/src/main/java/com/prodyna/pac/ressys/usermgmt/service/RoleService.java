@@ -18,16 +18,12 @@ import javax.ws.rs.core.MediaType;
 import com.prodyna.pac.ressys.basis.security.AdminAccessOnly;
 import com.prodyna.pac.ressys.basis.security.AllAccess;
 import com.prodyna.pac.ressys.basis.security.Secured;
-import com.prodyna.pac.ressys.monitoring.logging.Logged;
-import com.prodyna.pac.ressys.monitoring.performance.Monitored;
 import com.prodyna.pac.ressys.usermgmt.model.Role;
 
 /**
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
-@Logged
-@Monitored
 @Secured
 @Path("/role")
 public interface RoleService {

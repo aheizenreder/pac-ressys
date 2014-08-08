@@ -19,8 +19,6 @@ import com.prodyna.pac.ressys.aircraft.model.Aircraft;
 import com.prodyna.pac.ressys.basis.security.AdminAccessOnly;
 import com.prodyna.pac.ressys.basis.security.AllAccess;
 import com.prodyna.pac.ressys.basis.security.Secured;
-import com.prodyna.pac.ressys.monitoring.logging.Logged;
-import com.prodyna.pac.ressys.monitoring.performance.Monitored;
 
 /**
  * Interface for service on Aircraft entity.
@@ -28,8 +26,6 @@ import com.prodyna.pac.ressys.monitoring.performance.Monitored;
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
-@Logged
-@Monitored
 @Secured
 @Path("/aircraft")
 public interface AircraftService{

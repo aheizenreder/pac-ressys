@@ -13,6 +13,8 @@ import javax.persistence.TypedQuery;
 import javax.xml.bind.DatatypeConverter;
 
 import com.prodyna.pac.ressys.basis.service.BasisRessysServiceImpl;
+import com.prodyna.pac.ressys.monitoring.logging.Logged;
+import com.prodyna.pac.ressys.monitoring.performance.Monitored;
 import com.prodyna.pac.ressys.usermgmt.exception.MultipleResultsForAUserException;
 import com.prodyna.pac.ressys.usermgmt.exception.RoleAlreadyAssignedException;
 import com.prodyna.pac.ressys.usermgmt.exception.RoleNotAssignedException;
@@ -28,6 +30,8 @@ import com.prodyna.pac.ressys.usermgmt.model.UserToRoleKey;
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
+@Logged
+@Monitored
 @Stateless
 public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 		UserService {

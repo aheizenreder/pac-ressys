@@ -11,6 +11,8 @@ import javax.inject.Inject;
 
 import com.prodyna.pac.ressys.aircraft.model.AircraftType;
 import com.prodyna.pac.ressys.basis.service.BasisRessysServiceImpl;
+import com.prodyna.pac.ressys.monitoring.logging.Logged;
+import com.prodyna.pac.ressys.monitoring.performance.Monitored;
 
 /**
  * Implementation of AircraftTypeService.
@@ -18,6 +20,8 @@ import com.prodyna.pac.ressys.basis.service.BasisRessysServiceImpl;
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
+@Logged
+@Monitored
 @Stateless
 public class AircraftTypeServiceImpl extends
 		BasisRessysServiceImpl<AircraftType> implements AircraftTypeService {

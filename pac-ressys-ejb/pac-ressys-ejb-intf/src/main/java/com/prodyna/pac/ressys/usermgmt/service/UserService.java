@@ -18,8 +18,6 @@ import javax.ws.rs.core.MediaType;
 import com.prodyna.pac.ressys.basis.security.AdminAccessOnly;
 import com.prodyna.pac.ressys.basis.security.AllAccess;
 import com.prodyna.pac.ressys.basis.security.Secured;
-import com.prodyna.pac.ressys.monitoring.logging.Logged;
-import com.prodyna.pac.ressys.monitoring.performance.Monitored;
 import com.prodyna.pac.ressys.usermgmt.exception.MultipleResultsForAUserException;
 import com.prodyna.pac.ressys.usermgmt.exception.RoleAlreadyAssignedException;
 import com.prodyna.pac.ressys.usermgmt.exception.RoleNotAssignedException;
@@ -33,8 +31,6 @@ import com.prodyna.pac.ressys.usermgmt.model.User;
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
-@Logged
-@Monitored
 @Secured
 @Path("/user")
 public interface UserService {

@@ -7,12 +7,34 @@
 		<display-name>PAC Ressys Security REST interface</display-name>
 		<web-resource-collection>
 			<web-resource-name>PAC Ressys REST interface</web-resource-name>
-			<description>Secure access to PAC Ressys application</description>
+			<description>Secure access to PAC Ressys application through REST API</description>
 			<url-pattern>/rest/*</url-pattern>
 			<http-method>GET</http-method>
 			<http-method>POST</http-method>
 			<http-method>PUT</http-method>
 			<http-method>DELETE</http-method>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>PAC Ressys Web interface</web-resource-name>
+			<description>Secure access to PAC Ressys application</description>
+			<url-pattern>/web/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<description>Only special roles have access to the application</description>
+			<role-name>Admin</role-name>
+			<role-name>User</role-name>
+			<role-name>Guest</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	<security-constraint>
+		<display-name>PAC Ressys Security REST interface</display-name>
+		<web-resource-collection>
+			<web-resource-name>PAC Ressys Web interface</web-resource-name>
+			<description>Secure access to PAC Ressys application</description>
+			<url-pattern>/web/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<description>Only special roles have access to the application</description>
@@ -25,12 +47,8 @@
 		</user-data-constraint>
 	</security-constraint>
 	<login-config>
-		<auth-method>FORM</auth-method>
+		<auth-method>BASIC</auth-method>
 		<realm-name>ApplicationRealm</realm-name>
-		<form-login-config>
-			<form-login-page>/login.html</form-login-page>
-			<form-error-page>/error.html</form-error-page>
-		</form-login-config>
 	</login-config>
 	<security-role>
 		<role-name>Admin</role-name>

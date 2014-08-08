@@ -9,23 +9,30 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import com.prodyna.pac.ressys.aircraft.model.Aircraft;
 import com.prodyna.pac.ressys.basis.service.BasisRessysServiceImpl;
+import com.prodyna.pac.ressys.monitoring.logging.Logged;
+import com.prodyna.pac.ressys.monitoring.performance.Monitored;
 import com.prodyna.pac.ressys.usermgmt.model.Role;
 
 /**
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
+@Logged
+@Monitored
 @Stateless
-public class RoleServiceImpl extends BasisRessysServiceImpl<Role>
-implements RoleService{
-	
+public class RoleServiceImpl extends BasisRessysServiceImpl<Role> implements
+		RoleService {
+
 	@Inject
 	private Logger log;
 
-	/* (non-Javadoc)
-	 * @see com.prodyna.pac.ressys.usermgmt.service.RoleService#create(com.prodyna.pac.ressys.usermgmt.model.Role)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.prodyna.pac.ressys.usermgmt.service.RoleService#create(com.prodyna
+	 * .pac.ressys.usermgmt.model.Role)
 	 */
 	@Override
 	public Role create(Role role) {
@@ -34,8 +41,11 @@ implements RoleService{
 		return persisted;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.prodyna.pac.ressys.usermgmt.service.RoleService#get(java.lang.Long)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.prodyna.pac.ressys.usermgmt.service.RoleService#get(java.lang.Long)
 	 */
 	@Override
 	public Role get(Long id) {
@@ -44,7 +54,9 @@ implements RoleService{
 		return role;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.prodyna.pac.ressys.usermgmt.service.RoleService#getAll()
 	 */
 	@Override
@@ -55,8 +67,12 @@ implements RoleService{
 		return resultList;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.prodyna.pac.ressys.usermgmt.service.RoleService#update(com.prodyna.pac.ressys.usermgmt.model.Role)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.prodyna.pac.ressys.usermgmt.service.RoleService#update(com.prodyna
+	 * .pac.ressys.usermgmt.model.Role)
 	 */
 	@Override
 	public Role update(Role role) {
@@ -65,8 +81,12 @@ implements RoleService{
 		return updated;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.prodyna.pac.ressys.usermgmt.service.RoleService#delete(com.prodyna.pac.ressys.usermgmt.model.Role)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.prodyna.pac.ressys.usermgmt.service.RoleService#delete(com.prodyna
+	 * .pac.ressys.usermgmt.model.Role)
 	 */
 	@Override
 	public Role delete(Role role) {

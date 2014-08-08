@@ -11,11 +11,15 @@ import javax.inject.Inject;
 
 import com.prodyna.pac.ressys.aircraft.model.Aircraft;
 import com.prodyna.pac.ressys.basis.service.BasisRessysServiceImpl;
+import com.prodyna.pac.ressys.monitoring.logging.Logged;
+import com.prodyna.pac.ressys.monitoring.performance.Monitored;
 
 /**
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
+@Logged
+@Monitored
 @Stateless
 public class AircraftServiceImpl extends BasisRessysServiceImpl<Aircraft>
 		implements AircraftService {

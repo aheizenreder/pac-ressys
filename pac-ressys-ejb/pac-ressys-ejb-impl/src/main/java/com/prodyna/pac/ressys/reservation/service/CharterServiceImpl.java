@@ -9,14 +9,17 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import com.prodyna.pac.ressys.aircraft.model.Aircraft;
 import com.prodyna.pac.ressys.basis.service.BasisRessysServiceImpl;
+import com.prodyna.pac.ressys.monitoring.logging.Logged;
+import com.prodyna.pac.ressys.monitoring.performance.Monitored;
 import com.prodyna.pac.ressys.reservation.model.Charter;
 
 /**
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
+@Logged
+@Monitored
 @Stateless
 public class CharterServiceImpl extends BasisRessysServiceImpl<Charter> implements
 		CharterService {
