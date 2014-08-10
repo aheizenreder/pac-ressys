@@ -87,15 +87,24 @@ public class CharterRestServiceTest {
 
 		CharterService charterService = RestClientProducer.createServiceClient(deploymentURL.toString() + "rest", CharterService.class);
 
-//		AircraftTypeService aircraftTypeService = RestClientProducer.createServiceClient(deploymentURL.toString() + "rest", AircraftTypeService.class);
-//
-//		AircraftType type = new AircraftType("B373");
-//
-//		type = aircraftTypeService.create(type);
-//		Assert.assertNotNull(
-//				"Id of AircraftType may not be null after persist!",
-//				type.getId());
-//
+		AircraftService aircraftService = RestClientProducer.createServiceClient(deploymentURL.toString() + "rest", AircraftService.class);
+		
+		AircraftTypeService aircraftTypeService = RestClientProducer.createServiceClient(deploymentURL.toString() + "rest", AircraftTypeService.class);
+
+		AircraftType type = new AircraftType("B737");
+
+		type = aircraftTypeService.create(type);
+		Assert.assertNotNull(
+				"Id of AircraftType may not be null after persist!",
+				type.getId());
+		
+		Aircraft aircraft = new Aircraft(type, "D-LHLW");
+
+		aircraft = aircraftService.create(aircraft);
+		
+		Assert.assertNotNull("Id of Aircraft may not be null after persist!",
+		aircraft.getId());
+
 //		List<Aircraft> aircraftList = aircraftService.getAll();
 //		int startListSize = aircraftList.size();
 //

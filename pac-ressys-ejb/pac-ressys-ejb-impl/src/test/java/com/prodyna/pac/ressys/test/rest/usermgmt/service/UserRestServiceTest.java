@@ -5,6 +5,7 @@ package com.prodyna.pac.ressys.test.rest.usermgmt.service;
 
 import java.net.URL;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +25,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.prodyna.pac.ressys.aircraft.model.AircraftType;
+import com.prodyna.pac.ressys.aircraft.service.AircraftTypeService;
 import com.prodyna.pac.ressys.test.Deployments;
 import com.prodyna.pac.ressys.usermgmt.model.Role;
 import com.prodyna.pac.ressys.usermgmt.model.User;
@@ -47,6 +50,7 @@ public class UserRestServiceTest {
 	private Role guestRole;
 	private Role adminRole;
 	private Role userRole;
+	private HashMap<String, AircraftType> aircraftTypeMap = new HashMap<String, AircraftType>();
 
 	@ArquillianResource
 	private static URL deploymentURL;
@@ -97,6 +101,14 @@ public class UserRestServiceTest {
 				}
 			}
 		}
+		AircraftTypeService aircraftTypeService = RestClientProducer.createServiceClient(
+				deploymentURL.toString() + "rest", AircraftTypeService.class);
+
+		List<AircraftType> aircraftTypeList = aircraftTypeService.getAll();
+		for(AircraftType existType:aircraftTypeList){
+			aircraftTypeMap.put(existType.getTypeName(), existType);
+		}
+
 	}
 
 	/**
@@ -109,7 +121,8 @@ public class UserRestServiceTest {
 	@Test
 	public void testInitUserSet() {
 		log.info("START testInitUserSet() ...");
-		boolean roleAssigned = false;
+		boolean roleAssigned = false;		
+		boolean aircraftTypeAssigned = false;
 
 		Exception unexpectedException = null;
 
@@ -195,6 +208,21 @@ public class UserRestServiceTest {
 					unexpectedException);
 			Assert.assertTrue("Admin role was not assigned to user andreas!",
 					roleAssigned);
+			
+			log.info("assign all aircraft types to user andreas ...");
+			for(AircraftType at : aircraftTypeMap.values()){
+				unexpectedException=null;
+				try {
+					aircraftTypeAssigned=userService.addAircraftType(andreasUser.getId(), at.getId());
+				} catch (Exception e) {
+					log.log(Level.SEVERE, e.getMessage(), e);
+					unexpectedException = e;
+				}
+				Assert.assertNull("Unexpected exception was thrown!",
+						unexpectedException);
+				Assert.assertTrue(at.getTypeName()+" was not assigned to user andreas!",
+						aircraftTypeAssigned);
+			}
 		} else {
 			log.info("The user andreas already exists!");
 		}
@@ -236,12 +264,57 @@ public class UserRestServiceTest {
 					unexpectedException);
 			Assert.assertTrue("User role was not assigned to user pilot!",
 					roleAssigned);
+			
+			log.info("assign aircraft type B735 to user pilot ...");
+			AircraftType at = aircraftTypeMap.get("B735");
+			unexpectedException=null;
+			try {
+				aircraftTypeAssigned=userService.addAircraftType(pilotUser.getId(), at.getId());
+			} catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage(), e);
+				unexpectedException = e;
+			}
+			Assert.assertNull("Unexpected exception was thrown!",
+						unexpectedException);
+			Assert.assertTrue(at.getTypeName()+" was not assigned to user pilot!",
+						aircraftTypeAssigned);
+			
+			log.info("assign aircraft type A320 to user pilot ...");
+			at = aircraftTypeMap.get("A320");
+			unexpectedException=null;
+			try {
+				aircraftTypeAssigned=userService.addAircraftType(pilotUser.getId(), at.getId());
+			} catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage(), e);
+				unexpectedException = e;
+			}
+			Assert.assertNull("Unexpected exception was thrown!",
+						unexpectedException);
+			Assert.assertTrue(at.getTypeName()+" was not assigned to user pilot!",
+						aircraftTypeAssigned);
+			
+			log.info("assign aircraft type Cessna Citation III to user pilot ...");
+			at = aircraftTypeMap.get("Cessna Citation III");
+			unexpectedException=null;
+			try {
+				aircraftTypeAssigned=userService.addAircraftType(pilotUser.getId(), at.getId());
+			} catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage(), e);
+				unexpectedException = e;
+			}
+			Assert.assertNull("Unexpected exception was thrown!",
+						unexpectedException);
+			Assert.assertTrue(at.getTypeName()+" was not assigned to user pilot!",
+						aircraftTypeAssigned);
+			
 		} else {
 			log.info("The user pilot already exists!");
 		}
 
 		log.info("END testInitUserSet().");
 	}
+	
+
 
 	@Test
 	public void testUserRestService() throws Exception {

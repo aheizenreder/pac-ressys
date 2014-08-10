@@ -4,7 +4,10 @@
 package com.prodyna.pac.ressys.test.rest.aircraft.service;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -25,6 +28,8 @@ import org.junit.runner.RunWith;
 import com.prodyna.pac.ressys.aircraft.model.AircraftType;
 import com.prodyna.pac.ressys.aircraft.service.AircraftTypeService;
 import com.prodyna.pac.ressys.test.Deployments;
+import com.prodyna.pac.ressys.usermgmt.model.User;
+import com.prodyna.pac.ressys.usermgmt.service.UserService;
 import com.prodyna.pac.ressys.util.rest.RestClientProducer;
 
 /**
@@ -76,6 +81,95 @@ public class AircraftTypeRestServiceTest {
 	@After
 	public void tearDown() throws Exception {
 	}
+	
+	@Test
+	public void testInitAircraftTypeSet() {
+		log.info("START testInitAircraftTypeSet() ...");
+
+		log.info("Create AircraftTypeService from url " + deploymentURL.toString()
+				+ "rest");
+
+		AircraftTypeService aircraftTypeService = RestClientProducer.createServiceClient(
+				deploymentURL.toString() + "rest", AircraftTypeService.class);
+
+		List<AircraftType> aircraftTypeList = aircraftTypeService.getAll();
+		
+		List<String> foundAircraftTypeList = new ArrayList<String>();		
+		for(AircraftType existType:aircraftTypeList){
+			foundAircraftTypeList.add(existType.getTypeName());
+		}
+		
+		log.info("create aircraft type B735 ...");
+		if(!foundAircraftTypeList.contains("B735")){
+			AircraftType boeing735 = new AircraftType("B735");
+			boeing735 = aircraftTypeService.create(boeing735);
+			Assert.assertNotNull("AircraftType id may not be null after persist!",
+					boeing735.getId());
+		}else {
+			log.info("The aircraft type B735 already exists!");
+		}
+		
+		log.info("create aircraft type A320 ...");
+		if(!foundAircraftTypeList.contains("A320")){
+			AircraftType airbusA320 = new AircraftType("A320");
+			airbusA320 = aircraftTypeService.create(airbusA320);
+			Assert.assertNotNull("AircraftType id may not be null after persist!",
+					airbusA320.getId());
+		}else {
+			log.info("The aircraft type A320 already exists!");
+		}
+		
+		log.info("create aircraft type Bombardier Learjet 31A ...");
+		if(!foundAircraftTypeList.contains("Bombardier Learjet 31A")){
+			AircraftType learjet31A = new AircraftType("Bombardier Learjet 31A");
+			learjet31A = aircraftTypeService.create(learjet31A);
+			Assert.assertNotNull("AircraftType id may not be null after persist!",
+					learjet31A.getId());
+		}else {
+			log.info("The aircraft type Bombardier Learjet 31A already exists!");
+		}
+		
+		log.info("create aircraft type Cessna Citation XLS+ ...");
+		if(!foundAircraftTypeList.contains("Cessna Citation XLS+")){
+			AircraftType cessnaXLS = new AircraftType("Cessna Citation XLS+");
+			cessnaXLS = aircraftTypeService.create(cessnaXLS);
+			Assert.assertNotNull("AircraftType id may not be null after persist!",
+					cessnaXLS.getId());
+		}else {
+			log.info("The aircraft type Cessna Citation XLS+ already exists!");
+		}
+		
+		log.info("create aircraft type Cessna Citation III ...");
+		if(!foundAircraftTypeList.contains("Cessna Citation III")){
+			AircraftType cessna3 = new AircraftType("Cessna Citation III");
+			cessna3 = aircraftTypeService.create(cessna3);
+			Assert.assertNotNull("AircraftType id may not be null after persist!",
+					cessna3.getId());
+		}else {
+			log.info("The aircraft type Cessna Citation III already exists!");
+		}
+		
+		log.info("create aircraft type Cessna Citation Sovereign ...");
+		if(!foundAircraftTypeList.contains("Cessna Citation Sovereign")){
+			AircraftType cessnaSov = new AircraftType("Cessna Citation Sovereign");
+			cessnaSov = aircraftTypeService.create(cessnaSov);
+			Assert.assertNotNull("AircraftType id may not be null after persist!",
+					cessnaSov.getId());
+		}else {
+			log.info("The aircraft type Cessna Citation Sovereign already exists!");
+		}
+		
+		log.info("create aircraft type Piper Cheyenne IIIA ...");
+		if(!foundAircraftTypeList.contains("Piper Cheyenne IIIA")){
+			AircraftType piper3A = new AircraftType("Piper Cheyenne IIIA");
+			piper3A = aircraftTypeService.create(piper3A);
+			Assert.assertNotNull("AircraftType id may not be null after persist!",
+					piper3A.getId());
+		}else {
+			log.info("The aircraft type Piper Cheyenne IIIA already exists!");
+		}
+		log.info("END testInitAircraftTypeSet().");
+	}
 
 	@Test
 	public void testAircraftTypeRestService() {
@@ -88,7 +182,7 @@ public class AircraftTypeRestServiceTest {
 		List<AircraftType> aircraftTypeList = aircraftTypeService.getAll();
 		int startListSize = aircraftTypeList.size();
 
-		AircraftType type = new AircraftType("B373");
+		AircraftType type = new AircraftType("B737");
 
 		type = aircraftTypeService.create(type);
 
@@ -100,7 +194,7 @@ public class AircraftTypeRestServiceTest {
 		Assert.assertEquals(type, dbAircraftType);
 
 		// update aircraft name
-		type.setTypeName("B343");
+		type.setTypeName("B736");
 		dbAircraftType = aircraftTypeService.update(type);
 
 		Assert.assertEquals(type, dbAircraftType);

@@ -46,7 +46,7 @@ public class AircraftType implements Serializable {
 	 * name of the type
 	 */
 	@NotNull
-	@Size(min = 3, max = 20)
+	@Size(min = 3, max = 100)
 	private String typeName;
 
 	/**

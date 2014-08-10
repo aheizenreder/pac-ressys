@@ -144,6 +144,8 @@ public class RoleRestServiceTest {
 		List<Role> newRoleList = roleService.getAll();
 		Assert.assertEquals(startListSize + 1, newRoleList.size());
 
+		roleService.delete(testRole);
+		
 		log.info("END test role service.");
 	}
 

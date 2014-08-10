@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @NamedQueries({ @NamedQuery(name = Role.SELECT_ALL_ROLE, query = "SELECT a FROM Role a") })
 @Table(name = "role", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"id", "role" }))
+		"role" }))
 public class Role implements Serializable {
 
 	public static final String SELECT_ALL_ROLE = "selectAllRole";

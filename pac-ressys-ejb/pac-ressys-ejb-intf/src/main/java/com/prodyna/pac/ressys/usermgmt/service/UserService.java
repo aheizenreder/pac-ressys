@@ -15,9 +15,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.prodyna.pac.ressys.aircraft.model.AircraftType;
 import com.prodyna.pac.ressys.basis.security.AdminAccessOnly;
 import com.prodyna.pac.ressys.basis.security.AllAccess;
 import com.prodyna.pac.ressys.basis.security.Secured;
+import com.prodyna.pac.ressys.usermgmt.exception.AircraftTypeAlreadyAssignedException;
+import com.prodyna.pac.ressys.usermgmt.exception.AircraftTypeNotAssignedException;
 import com.prodyna.pac.ressys.usermgmt.exception.MultipleResultsForAUserException;
 import com.prodyna.pac.ressys.usermgmt.exception.RoleAlreadyAssignedException;
 import com.prodyna.pac.ressys.usermgmt.exception.RoleNotAssignedException;
@@ -144,6 +147,56 @@ public interface UserService {
 			@PathParam("passwordEncrypted") boolean passwordEncrypted)
 			throws UserNotFoundException, MultipleResultsForAUserException;
 
+	/**
+	 * adds a aircraft type to the user.
+	 * 
+	 * @param userId
+	 *            id of the user which have to get the new aircraft type assigned.
+	 * @param aircraftTypeId
+	 *            id of the aircraft type which is to assign to the user.
+	 * @return true if the aircraftType was assigned to the user.
+	 * @throws AircraftTypeAlreadyAssignedException
+	 *             if the aircraftType already assigned to the user.
+	 */
+	@GET
+	@Path("/{userid:[0-9]+}/addAircraftType/{aircrafttypeid:[0-9]+}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@AdminAccessOnly
+	public boolean addAircraftType(@PathParam("userid") Long userId,
+			@PathParam("aircrafttypeid") Long typeId)
+			throws AircraftTypeAlreadyAssignedException;
+
+	/**
+	 * remove a aircraft type of a the user.
+	 * 
+	 * @param userId
+	 *            id of the user which aircraft type has to be removed.
+	 * @param aircraftTypeId
+	 *            id of the aircraft type which is to remove from user.
+	 * @return true if the aircraft type was removed from user.
+	 * @throws AircraftTypeAlreadyAssignedException
+	 *             if the aircraft type already assigned to the user.
+	 */
+	@GET
+	@Path("/{userid:[0-9]+}/removeAircraftType/{aircrafttypeid:[0-9]+}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@AdminAccessOnly
+	public boolean removeAircraftType(@PathParam("userid") Long userId,
+			@PathParam("aircrafttypeid") Long aircraftTypeId) throws AircraftTypeNotAssignedException;
+
+	/**
+	 * reads all aircraft types of a user.
+	 * 
+	 * @param user
+	 *            user to get aircraft type for.
+	 * @return a list with all aircraft types for given user.
+	 */
+	@GET
+	@Path("/{userid:[0-9]+}/getuseraircrafttypes")
+	@Produces(MediaType.APPLICATION_JSON)
+	@AllAccess
+	public List<AircraftType> getUserAircraftTypes(@PathParam("userid") Long userId);
+	
 	/**
 	 * adds a role to the user.
 	 * 

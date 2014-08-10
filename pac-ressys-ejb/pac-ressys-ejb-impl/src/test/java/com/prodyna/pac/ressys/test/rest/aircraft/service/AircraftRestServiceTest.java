@@ -4,6 +4,8 @@
 package com.prodyna.pac.ressys.test.rest.aircraft.service;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -79,6 +81,134 @@ public class AircraftRestServiceTest {
 	public void tearDown() throws Exception {
 	}
 
+	@Test
+	public void testInitAircraftSet() {
+		log.info("START testInitAircraftSet() ...");
+
+		log.info("Create AircraftService from url " + deploymentURL.toString()
+				+ "rest");
+		
+		AircraftTypeService aircraftTypeService = RestClientProducer.createServiceClient(
+				deploymentURL.toString() + "rest", AircraftTypeService.class);
+
+		List<AircraftType> aircraftTypeList = aircraftTypeService.getAll();
+		HashMap<String, AircraftType> aircraftTypeMap = new HashMap<String, AircraftType>();
+		for(AircraftType existType:aircraftTypeList){
+			aircraftTypeMap.put(existType.getTypeName(), existType);
+		}
+
+		AircraftService aircraftService = RestClientProducer.createServiceClient(
+				deploymentURL.toString() + "rest", AircraftService.class);
+
+		List<Aircraft> aircraftList = aircraftService.getAll();
+		
+		List<String> foundAircraftList = new ArrayList<String>();		
+		for(Aircraft existAircraft:aircraftList){
+			foundAircraftList.add(existAircraft.getAircraftName());
+		}
+		
+		log.info("create aircraft D-KPRT...");
+		if(!foundAircraftList.contains("D-KPRT")){
+			AircraftType boeing735 = aircraftTypeMap.get("B735");
+			Aircraft dKprt = new Aircraft(boeing735, "D-KPRT");
+			dKprt = aircraftService.create(dKprt);
+			Assert.assertNotNull("Aircraft id may not be null after persist!",
+					dKprt.getId());
+		}else {
+			log.info("The aircraft D-KPRT already exists!");
+		}
+		
+		log.info("create aircraft D-KZYO...");
+		if(!foundAircraftList.contains("D-KZYO")){
+			AircraftType boeing735 = aircraftTypeMap.get("B735");
+			Aircraft dKzyo = new Aircraft(boeing735, "D-KZYO");
+			dKzyo = aircraftService.create(dKzyo);
+			Assert.assertNotNull("Aircraft id may not be null after persist!",
+					dKzyo.getId());
+		}else {
+			log.info("The aircraft D-KZYO already exists!");
+		}
+		
+		log.info("create aircraft D-ASFC...");
+		if(!foundAircraftList.contains("D-ASFC")){
+			AircraftType airbusA320 = aircraftTypeMap.get("A320");
+			Aircraft dAsfc = new Aircraft(airbusA320, "D-ASFC");
+			dAsfc = aircraftService.create(dAsfc);
+			Assert.assertNotNull("Aircraft id may not be null after persist!",
+					dAsfc.getId());
+		}else {
+			log.info("The aircraft D-ASFC already exists!");
+		}
+		
+		log.info("create aircraft D-APYS...");
+		if(!foundAircraftList.contains("D-APYS")){
+			AircraftType airbusA320 = aircraftTypeMap.get("A320");
+			Aircraft dApys = new Aircraft(airbusA320, "D-APYS");
+			dApys = aircraftService.create(dApys);
+			Assert.assertNotNull("Aircraft id may not be null after persist!",
+					dApys.getId());
+		}else {
+			log.info("The aircraft D-APYS already exists!");
+		}
+		
+		log.info("create aircraft D-CPRO...");
+		if(!foundAircraftList.contains("D-CPRO")){
+			AircraftType bombardier31A = aircraftTypeMap.get("Bombardier Learjet 31A");
+			Aircraft dCpro = new Aircraft(bombardier31A, "D-CPRO");
+			dCpro = aircraftService.create(dCpro);
+			Assert.assertNotNull("Aircraft id may not be null after persist!",
+					dCpro.getId());
+		}else {
+			log.info("The aircraft D-CPRO already exists!");
+		}
+		
+		log.info("create aircraft D-CCLA...");
+		if(!foundAircraftList.contains("D-CCLA")){
+			AircraftType cessnaXLS = aircraftTypeMap.get("Cessna Citation XLS+");
+			Aircraft dCcla = new Aircraft(cessnaXLS, "D-CCLA");
+			dCcla = aircraftService.create(dCcla);
+			Assert.assertNotNull("Aircraft id may not be null after persist!",
+					dCcla.getId());
+		}else {
+			log.info("The aircraft D-CCLA already exists!");
+		}
+		
+		log.info("create aircraft D-CREY...");
+		if(!foundAircraftList.contains("D-CREY")){
+			AircraftType cessna3 = aircraftTypeMap.get("Cessna Citation III");
+			Aircraft dCrey = new Aircraft(cessna3, "D-CREY");
+			dCrey = aircraftService.create(dCrey);
+			Assert.assertNotNull("Aircraft id may not be null after persist!",
+					dCrey.getId());
+		}else {
+			log.info("The aircraft D-CREY already exists!");
+		}
+		
+		log.info("create aircraft D-CMDH...");
+		if(!foundAircraftList.contains("D-CMDH")){
+			AircraftType cessnaSov = aircraftTypeMap.get("Cessna Citation Sovereign");
+			Aircraft dCmdh = new Aircraft(cessnaSov, "D-CMDH");
+			dCmdh = aircraftService.create(dCmdh);
+			Assert.assertNotNull("Aircraft id may not be null after persist!",
+					dCmdh.getId());
+		}else {
+			log.info("The aircraft D-CMDH already exists!");
+		}
+		
+		log.info("create aircraft D-IFSH...");
+		if(!foundAircraftList.contains("D-IFSH")){
+			AircraftType piper3A = aircraftTypeMap.get("Piper Cheyenne IIIA");
+			Aircraft dIfsh = new Aircraft(piper3A, "D-IFSH");
+			dIfsh = aircraftService.create(dIfsh);
+			Assert.assertNotNull("Aircraft id may not be null after persist!",
+					dIfsh.getId());
+		}else {
+			log.info("The aircraft D-IFSH already exists!");
+		}
+
+		log.info("END testInitAircraftSet().");
+	}
+	
 	@Test
 	public void testAircraftRestService() {
 

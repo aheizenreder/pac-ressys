@@ -12,13 +12,19 @@ import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.xml.bind.DatatypeConverter;
 
+import com.prodyna.pac.ressys.aircraft.model.AircraftType;
+import com.prodyna.pac.ressys.aircraft.service.AircraftTypeService;
 import com.prodyna.pac.ressys.basis.service.BasisRessysServiceImpl;
 import com.prodyna.pac.ressys.monitoring.logging.Logged;
 import com.prodyna.pac.ressys.monitoring.performance.Monitored;
+import com.prodyna.pac.ressys.usermgmt.exception.AircraftTypeAlreadyAssignedException;
+import com.prodyna.pac.ressys.usermgmt.exception.AircraftTypeNotAssignedException;
 import com.prodyna.pac.ressys.usermgmt.exception.MultipleResultsForAUserException;
 import com.prodyna.pac.ressys.usermgmt.exception.RoleAlreadyAssignedException;
 import com.prodyna.pac.ressys.usermgmt.exception.RoleNotAssignedException;
 import com.prodyna.pac.ressys.usermgmt.exception.UserNotFoundException;
+import com.prodyna.pac.ressys.usermgmt.model.AircraftTypeToUser;
+import com.prodyna.pac.ressys.usermgmt.model.AircraftTypeToUserKey;
 import com.prodyna.pac.ressys.usermgmt.model.Role;
 import com.prodyna.pac.ressys.usermgmt.model.User;
 import com.prodyna.pac.ressys.usermgmt.model.UserToRole;
@@ -36,6 +42,7 @@ import com.prodyna.pac.ressys.usermgmt.model.UserToRoleKey;
 public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 		UserService {
 
+
 	@Inject
 	private Logger log;
 
@@ -44,6 +51,9 @@ public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 
 	@Inject
 	private RoleService roleService;
+	
+	@Inject
+	private AircraftTypeService aircraftTypeService;
 
 	/*
 	 * (non-Javadoc)
@@ -306,6 +316,85 @@ public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 		log.info("END getRoles().");
 		return resultList;
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.prodyna.pac.ressys.usermgmt.service.UserService#addAircraftType(java.lang.Long, java.lang.Long)
+	 */
+	@Override
+	public boolean addAircraftType(Long userId, Long aircraftTypeId)
+			throws AircraftTypeAlreadyAssignedException {
+		log.info("START addAircraftType() ...");
+
+		// get user from db
+		User user = get(userId);
+		// get aircraft type from db
+		AircraftType aircraftType = aircraftTypeService.get(aircraftTypeId);
+
+		// check if the assignment already exists
+		List<AircraftType> aircraftTypesList = getUserAircraftTypes(user.getId());
+		if (!aircraftTypesList.isEmpty() && aircraftTypesList.contains(aircraftType)) {
+			// the requested aircraft type is already assigned to the user
+			// throw a exception.
+			log.severe("The requested assosiation already exists!");
+			throw new AircraftTypeAlreadyAssignedException(user, aircraftType);
+		}
+
+		// assign aircraft type to the user
+		AircraftTypeToUser attu = new AircraftTypeToUser(user, aircraftType);
+		getEntityManager().persist(attu);
+		getEntityManager().flush();
+
+		log.info("END addAircraftType().");
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.prodyna.pac.ressys.usermgmt.service.UserService#removeAircraftType(java.lang.Long, java.lang.Long)
+	 */
+	@Override
+	public boolean removeAircraftType(Long userId, Long aircraftTypeId)
+			throws AircraftTypeNotAssignedException {
+		log.info("START removeAircraftType() ...");
+
+		// get user from db
+		User user = get(userId);
+		// get aircraft type from db
+		AircraftType aircraftType = aircraftTypeService.get(aircraftTypeId);
+
+		// check if the assignment already exists
+		List<AircraftType> aircraftTypesList = getUserAircraftTypes(user.getId());
+		if (!aircraftTypesList.isEmpty() && !aircraftTypesList.contains(aircraftType)) {
+			// the requested AircraftType is not assigned to the user
+			// throw a exception.
+			log.severe("The aircraft type to remove is not assigned to the user!");
+			throw new AircraftTypeNotAssignedException(user, aircraftType);
+		}
+
+		AircraftTypeToUserKey attuKey = new AircraftTypeToUserKey(aircraftType.getId(), user.getId());
+		AircraftTypeToUserKey attu = getEntityManager().find(AircraftTypeToUserKey.class, attuKey);
+		getEntityManager().remove(attu);
+		getEntityManager().flush();
+
+		log.info("END removeAircraftType().");
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.prodyna.pac.ressys.usermgmt.service.UserService#getUserAircraftTypes(java.lang.Long)
+	 */
+	@Override
+	public List<AircraftType> getUserAircraftTypes(Long userId) {
+		log.info("START getUserAircraftTypes() ...");
+		TypedQuery<AircraftType> findAircraftTypesForUser = getEntityManager()
+				.createNamedQuery(AircraftTypeToUser.FIND_AIRCRAFT_TYPE_FOR_USER, AircraftType.class);
+		findAircraftTypesForUser.setParameter(
+				AircraftTypeToUser.FIND_AIRCRAFT_TYPE_FOR_USER_PARAMETER_NAME_USER_ID, userId);
+		List<AircraftType> resultList = findAircraftTypesForUser.getResultList();
+
+		log.info("END getUserAircraftTypes().");
+		return resultList;
+	}
+
 
 	/**
 	 * This method check the encryption of the user password and if the password
