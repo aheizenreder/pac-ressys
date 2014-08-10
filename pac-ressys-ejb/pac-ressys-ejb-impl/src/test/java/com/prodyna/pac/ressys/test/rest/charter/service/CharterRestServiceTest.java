@@ -129,12 +129,12 @@ public class CharterRestServiceTest {
 //		Assert.assertEquals(startListSize + 1, newAircraftList.size());
 //
 //		// delete aircraft
-//		dbAircraft = aircraftService.delete(aircraft);
-//		// try to get deleted aircraft
-//		dbAircraft = aircraftService.get(dbAircraft.getId());
-//		Assert.assertNull(dbAircraft);
-//
-//		aircraftTypeService.delete(type);
+		aircraft = aircraftService.delete(aircraft);
+		// try to get deleted aircraft
+		aircraft = aircraftService.get(aircraft.getId());
+		Assert.assertNull(aircraft);
+
+		aircraftTypeService.delete(type);
 
 		log.info("END test()");
 	}
