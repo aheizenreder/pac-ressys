@@ -3,10 +3,12 @@
  */
 package com.prodyna.pac.ressys.test.rest.charter.service;
 
-import static org.junit.Assert.*;
-
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -25,12 +27,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.prodyna.pac.ressys.aircraft.model.Aircraft;
-import com.prodyna.pac.ressys.aircraft.model.AircraftType;
 import com.prodyna.pac.ressys.aircraft.service.AircraftService;
-import com.prodyna.pac.ressys.aircraft.service.AircraftTypeService;
+import com.prodyna.pac.ressys.reservation.model.Charter;
+import com.prodyna.pac.ressys.reservation.model.CharterState;
 import com.prodyna.pac.ressys.reservation.service.CharterService;
 import com.prodyna.pac.ressys.test.Deployments;
-import com.prodyna.pac.ressys.test.rest.aircraft.service.AircraftRestServiceTest;
+import com.prodyna.pac.ressys.usermgmt.model.User;
+import com.prodyna.pac.ressys.usermgmt.service.UserService;
 import com.prodyna.pac.ressys.util.rest.RestClientProducer;
 
 /**
@@ -40,9 +43,12 @@ import com.prodyna.pac.ressys.util.rest.RestClientProducer;
 @RunWith(Arquillian.class)
 @RunAsClient
 public class CharterRestServiceTest {
-	
+
 	private Logger log = Logger.getLogger(CharterRestServiceTest.class
 			.getName());
+
+	private static final DateFormat DF = new SimpleDateFormat(
+			"dd.MM.yyyy HH:mm");
 
 	@ArquillianResource
 	private URL deploymentURL;
@@ -82,61 +88,161 @@ public class CharterRestServiceTest {
 	}
 
 	@Test
-	public void test() {
-		log.info("START test charter service ...");
+	public void testInitCharterSet() {
+		log.info("START testInitCharterSet() ...");
+		Date startDate = null;
+		Date endDate = null;
 
-		CharterService charterService = RestClientProducer.createServiceClient(deploymentURL.toString() + "rest", CharterService.class);
+		log.info("Create CharterService from url " + deploymentURL.toString()
+				+ "rest");
 
-		AircraftService aircraftService = RestClientProducer.createServiceClient(deploymentURL.toString() + "rest", AircraftService.class);
-		
-		AircraftTypeService aircraftTypeService = RestClientProducer.createServiceClient(deploymentURL.toString() + "rest", AircraftTypeService.class);
+		CharterService charterService = RestClientProducer.createServiceClient(
+				deploymentURL.toString() + "rest", CharterService.class);
+		UserService userService = RestClientProducer.createServiceClient(
+				deploymentURL.toString() + "rest", UserService.class);
+		AircraftService aircraftService = RestClientProducer
+				.createServiceClient(deploymentURL.toString() + "rest",
+						AircraftService.class);
 
-		AircraftType type = new AircraftType("B737");
+		List<Aircraft> aircraftList = aircraftService.getAll();
 
-		type = aircraftTypeService.create(type);
-		Assert.assertNotNull(
-				"Id of AircraftType may not be null after persist!",
-				type.getId());
-		
-		Aircraft aircraft = new Aircraft(type, "D-LHLW");
+		User user = null;
+		try {
+			user = userService.findByLoginName("andreas");
+		} catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+			Assert.fail(e.getMessage());
+		}
 
-		aircraft = aircraftService.create(aircraft);
-		
-		Assert.assertNotNull("Id of Aircraft may not be null after persist!",
-		aircraft.getId());
+		log.info("create charter for user andreas ...");
+		try {
+			startDate = DF.parse("25.08.2014 08:00");
+			endDate = DF.parse("25.08.2014 20:00");
+		} catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+			Assert.fail(e.getMessage());
+		}
+		Charter charter = new Charter(startDate, endDate, user,
+				aircraftList.get(1), CharterState.RESERVED);
+		charter = charterService.create(charter);
+		Assert.assertNotNull("Id of charter may not be null after persist!",
+				charter.getId());
 
-//		List<Aircraft> aircraftList = aircraftService.getAll();
-//		int startListSize = aircraftList.size();
-//
-//		Aircraft aircraft = new Aircraft(type, "D-LHAD");
-//
-//		aircraft = aircraftService.create(aircraft);
-//
-//		Assert.assertNotNull("Id of Aircraft may not be null after persist!",
-//				aircraft.getId());
-//
-//		Aircraft dbAircraft = aircraftService.get(aircraft.getId());
-//		Assert.assertEquals(aircraft, dbAircraft);
-//
-//		// update aircraft name
-//		aircraft.setAircraftName("D-LHDA");
-//		dbAircraft = aircraftService.update(aircraft);
-//
-//		Assert.assertEquals(aircraft, dbAircraft);
-//
-//		// test getAll
-//		List<Aircraft> newAircraftList = aircraftService.getAll();
-//		Assert.assertEquals(startListSize + 1, newAircraftList.size());
-//
-//		// delete aircraft
-		aircraft = aircraftService.delete(aircraft);
-		// try to get deleted aircraft
-		aircraft = aircraftService.get(aircraft.getId());
-		Assert.assertNull(aircraft);
+		log.info("create charter for user andreas ...");
+		try {
+			startDate = DF.parse("29.08.2014 10:00");
+			endDate = DF.parse("29.08.2014 23:00");
+		} catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+			Assert.fail(e.getMessage());
+		}
+		charter = new Charter(startDate, endDate, user, aircraftList.get(2),
+				CharterState.RESERVED);
+		charter = charterService.create(charter);
+		Assert.assertNotNull("Id of charter may not be null after persist!",
+				charter.getId());
 
-		aircraftTypeService.delete(type);
+		log.info("create charter for user andreas ...");
+		try {
+			startDate = DF.parse("02.09.2014 10:00");
+			endDate = DF.parse("02.09.2014 19:00");
+		} catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+			Assert.fail(e.getMessage());
+		}
+		charter = new Charter(startDate, endDate, user, aircraftList.get(1),
+				CharterState.RESERVED);
+		charter = charterService.create(charter);
+		Assert.assertNotNull("Id of charter may not be null after persist!",
+				charter.getId());
 
-		log.info("END test()");
+		User userPilot = null;
+		try {
+			userPilot = userService.findByLoginName("pilot");
+		} catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+			Assert.fail(e.getMessage());
+		}
+
+		log.info("create charter for user pilot...");
+		try {
+			startDate = DF.parse("28.09.2014 07:00");
+			endDate = DF.parse("28.09.2014 19:00");
+		} catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+			Assert.fail(e.getMessage());
+		}
+		charter = new Charter(startDate, endDate, userPilot,
+				aircraftList.get(3), CharterState.RESERVED);
+		charter = charterService.create(charter);
+		Assert.assertNotNull("Id of charter may not be null after persist!",
+				charter.getId());
+
+		log.info("END testInitCharterSet().");
+	}
+
+	@Test
+	public void testCharterRestService() {
+		log.info("START test charter service...");
+
+		CharterService charterService = RestClientProducer.createServiceClient(
+				deploymentURL.toString() + "rest", CharterService.class);
+
+		AircraftService aircraftService = RestClientProducer
+				.createServiceClient(deploymentURL.toString() + "rest",
+						AircraftService.class);
+
+		UserService userService = RestClientProducer.createServiceClient(
+				deploymentURL.toString() + "rest", UserService.class);
+
+		List<Aircraft> aircraftList = aircraftService.getAll();
+		int startListSize = aircraftList.size();
+		User user = null;
+		try {
+			user = userService.findByLoginName("andreas");
+		} catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+			Assert.fail(e.getMessage());
+		}
+		Date startDate = null;
+		Date endDate = null;
+		Date updateStartDate = null;
+		try {
+			startDate = DF.parse("22.08.2014 08:00");
+			endDate = DF.parse("22.08.2014 20:00");
+			updateStartDate = DF.parse("22.08.2014 10:00");
+		} catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+			Assert.fail(e.getMessage());
+		}
+
+		Charter charter = new Charter(startDate, endDate, user,
+				aircraftList.get(0), CharterState.RESERVED);
+		// test create
+		charter = charterService.create(charter);
+		Assert.assertNotNull("Id of charter may not be null after persist!",
+				charter.getId());
+
+		// test get
+		Charter dbCharter = charterService.get(charter.getId());
+		Assert.assertEquals(charter, dbCharter);
+
+		// update charter startDate
+		charter.setStartDate(updateStartDate);
+		dbCharter = charterService.update(charter);
+		Assert.assertEquals(charter, dbCharter);
+
+		// test getAll
+		List<Charter> newCharterList = charterService.getAll();
+		Assert.assertEquals(startListSize + 1, newCharterList.size());
+
+		// test delete charter
+		dbCharter = charterService.delete(charter);
+		// try to get deleted charter
+		dbCharter = charterService.get(dbCharter.getId());
+		Assert.assertNull(dbCharter);
+
+		log.info("END test charter service...");
 	}
 
 }
