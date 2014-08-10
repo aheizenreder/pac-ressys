@@ -29,18 +29,18 @@
 <!--         <p>Enforces annotation-based constraints defined on the model class.</p> -->
          <h:panelGrid columns="3" columnClasses="titleCell">
             <h:outputLabel for="loginName" value="Login:"/>
-            <h:inputText id="loginName" value="#{loginUser.loginName}" />
+            <h:inputText id="loginName" value="#{loginController.loginName}" />
             <h:message for="loginName" errorClass="invalid"/>
 
             <h:outputLabel for="password" value="Password:"/>
-            <h:inputText id="password" value="#{loginUser.password}"/>
+            <h:inputSecret id="password" value="#{loginController.password}"/>
             <h:message for="password" errorClass="invalid"/>
 
          </h:panelGrid>
 
          <p>
             <h:panelGrid columns="2">
-               <h:commandButton id="login" action="#{LoginController.login}" value="Login" styleClass="register"/>
+               <h:commandButton id="login" action="#{loginController.login}" value="Login" styleClass="register"/>
                <h:messages styleClass="messages" errorClass="invalid" infoClass="valid" warnClass="warning"
                            globalOnly="true"/>
             </h:panelGrid>

@@ -25,10 +25,10 @@
 			<role-name>User</role-name>
 			<role-name>Guest</role-name>
 		</auth-constraint>
-		<user-data-constraint>
+<!-- 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
 		</user-data-constraint>
-	</security-constraint>
+-->	</security-constraint>
 	<security-constraint>
 		<display-name>PAC Ressys Security REST interface</display-name>
 		<web-resource-collection>
