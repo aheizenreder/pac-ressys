@@ -16,72 +16,107 @@
     limitations under the License.
 -->
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-   xmlns:ui="http://java.sun.com/jsf/facelets"
-   xmlns:f="http://java.sun.com/jsf/core"
-   xmlns:h="http://java.sun.com/jsf/html"
-   template="/WEB-INF/templates/mainViewTemplate.xhtml">
-   <ui:define name="content">
-      <h1>Welcome to JBoss!</h1>
-
-      <div>
-         <p>You have successfully deployed a Java EE 6 Enterprise Application.</p>
-         <h3>Your application can run on:</h3>
-         <img src="resources/gfx/dualbrand_as7eap.png"/>
-      </div>
-
-      <h:form id="reg">
-         <h2>Member Registration</h2>
-         <p>Enforces annotation-based constraints defined on the model class.</p>
-         <h:panelGrid columns="3" columnClasses="titleCell">
-            <h:outputLabel for="name" value="Name:"/>
-            <h:inputText id="name" value="#{newMember.name}" />
-            <h:message for="name" errorClass="invalid"/>
-
-            <h:outputLabel for="email" value="Email:"/>
-            <h:inputText id="email" value="#{newMember.email}"/>
-            <h:message for="email" errorClass="invalid"/>
-
-            <h:outputLabel for="phoneNumber" value="Phone #:"/>
-            <h:inputText id="phoneNumber" value="#{newMember.phoneNumber}"/>
-            <h:message for="phoneNumber" errorClass="invalid"/>
-         </h:panelGrid>
-
-         <p>
-            <h:panelGrid columns="2">
-               <h:commandButton id="register" action="#{memberController.register}" value="Register" styleClass="register"/>
-               <h:messages styleClass="messages" errorClass="invalid" infoClass="valid" warnClass="warning"
-                           globalOnly="true"/>
-            </h:panelGrid>
-         </p>
-      </h:form>
-      <h2>Members</h2>
-      <h:panelGroup rendered="#{empty members}">
-         <em>No registered members.</em>
-      </h:panelGroup>
-      <h:dataTable var="_member" value="#{members}" rendered="#{not empty members}" styleClass="simpletablestyle">
-         <h:column>
-            <f:facet name="header">Id</f:facet>
-                #{_member.id}
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/mainViewTemplate.xhtml">
+	<ui:define name="content">
+		<h2>Aircrafts</h2>
+		<h:panelGroup rendered="#{empty aircraftListController.aircraftList}">
+			<em>No aircrafts in system</em>
+		</h:panelGroup>
+		<h:form id="aircraft_form">
+			<h:dataTable var="_aircraft"
+				value="#{aircraftListController.aircraftList}"
+				rendered="#{not empty aircraftListController.aircraftList}"
+				styleClass="simpletablestyle">
+				<h:column>
+					<f:facet name="header">Id</f:facet>
+                #{_aircraft.id}
             </h:column>
-         <h:column>
-            <f:facet name="header">Name</f:facet>
-                #{_member.name}
+				<h:column>
+					<f:facet name="header">Aircraft type</f:facet>
+                #{_aircraft.aircraftType.typeName}
             </h:column>
-         <h:column>
-            <f:facet name="header">Email</f:facet>
-                #{_member.email}
+				<h:column>
+					<f:facet name="header">Aircraft Name</f:facet>
+                #{_aircraft.aircraftName}
             </h:column>
-         <h:column>
-            <f:facet name="header">Phone #</f:facet>
-                #{_member.phoneNumber}
+				<h:column rendered="#{loginController.actionsAllowed}">
+					<f:facet name="header">Actions</f:facet>
+					<div id="reservation_link">
+						<h:link outcome="reservation" value="Charter">
+							<f:param name="aircraftId" value="#{_aircraft.id}" />
+						</h:link>
+					</div>
+				</h:column>
+			</h:dataTable>
+		</h:form>
+
+		<p />
+		<!-- list with  -->
+		<h2>Aircraft reservations</h2>
+		<h:panelGroup rendered="#{empty charterListController.charterList}">
+			<em>No reservations in system</em>
+		</h:panelGroup>
+		<h:form id="charter_form">
+			<h:dataTable var="_charter"
+				value="#{charterListController.charterList}"
+				rendered="#{not empty charterListController.charterList}"
+				styleClass="simpletablestyle">
+				<h:column>
+					<f:facet name="header">Id</f:facet>
+                #{_charter.id}
             </h:column>
-         <h:column>
-            <f:facet name="header">REST URL</f:facet>
-            <a href="#{request.contextPath}/rest/members/#{_member.id}">/rest/members/#{_member.id}</a>
-         </h:column>
-         <f:facet name="footer">
-            REST URL for all members: <a href="#{request.contextPath}/rest/members">/rest/members</a>
-         </f:facet>
-      </h:dataTable>
-   </ui:define>
+<!-- 				<h:column>
+					<f:facet name="header">Aircraft type</f:facet>
+                #{charter.aircraft.aircraftType.typeName}
+              </h:column>
+--> 				<h:column>
+					<f:facet name="header">Aircraft Name</f:facet>
+                #{_charter.aircraft.aircraftName}
+            </h:column>
+				<h:column>
+					<f:facet name="header">Start</f:facet>
+                #{_charter.startDate}
+            </h:column>
+				<h:column>
+					<f:facet name="header">End</f:facet>
+                #{_charter.endDate}
+            </h:column>
+				<h:column>
+					<f:facet name="header">Pilot</f:facet>
+                #{_charter.pilot.userName}
+            </h:column>
+				<h:column>
+					<f:facet name="header">State</f:facet>
+                #{_charter.charterState}
+            </h:column>
+				<h:column rendered="#{loginController.actionsAllowed}">
+					<f:facet name="header">Actions</f:facet>
+					<div id="cancel_link">
+						<h:commandLink
+							rendered="#{_charter.charterState == charterState.RESERVED}"
+							actionListener="#{charterListController.cancelCharter(_charter.id)}"
+							value="Cancel">
+						</h:commandLink>
+					</div>
+					<div id="lent_link">
+						<h:commandLink
+							rendered="#{_charter.charterState == charterState.RESERVED}"
+							actionListener="#{charterListController.lendCharter(_charter.id)}"
+							value="Lent">
+						</h:commandLink>
+					</div>
+					<div id="return_link">
+						<h:commandLink
+							rendered="#{_charter.charterState == charterState.LENT}"
+							actionListener="#{charterListController.returnCharter(_charter.id)}"
+							value="Return">
+						</h:commandLink>
+					</div>
+				</h:column>
+			</h:dataTable>
+		</h:form>
+	</ui:define>
 </ui:composition>

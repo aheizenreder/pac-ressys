@@ -5,9 +5,7 @@ package com.prodyna.pac.ressys.test.rest.aircraft.service;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -28,8 +26,6 @@ import org.junit.runner.RunWith;
 import com.prodyna.pac.ressys.aircraft.model.AircraftType;
 import com.prodyna.pac.ressys.aircraft.service.AircraftTypeService;
 import com.prodyna.pac.ressys.test.Deployments;
-import com.prodyna.pac.ressys.usermgmt.model.User;
-import com.prodyna.pac.ressys.usermgmt.service.UserService;
 import com.prodyna.pac.ressys.util.rest.RestClientProducer;
 
 /**

@@ -331,7 +331,7 @@ public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 		AircraftType aircraftType = aircraftTypeService.get(aircraftTypeId);
 
 		// check if the assignment already exists
-		List<AircraftType> aircraftTypesList = getUserAircraftTypes(user.getId());
+		List<AircraftType> aircraftTypesList = getAircraftTypes(user.getId());
 		if (!aircraftTypesList.isEmpty() && aircraftTypesList.contains(aircraftType)) {
 			// the requested aircraft type is already assigned to the user
 			// throw a exception.
@@ -362,7 +362,7 @@ public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 		AircraftType aircraftType = aircraftTypeService.get(aircraftTypeId);
 
 		// check if the assignment already exists
-		List<AircraftType> aircraftTypesList = getUserAircraftTypes(user.getId());
+		List<AircraftType> aircraftTypesList = getAircraftTypes(user.getId());
 		if (!aircraftTypesList.isEmpty() && !aircraftTypesList.contains(aircraftType)) {
 			// the requested AircraftType is not assigned to the user
 			// throw a exception.
@@ -383,7 +383,7 @@ public class UserServiceImpl extends BasisRessysServiceImpl<User> implements
 	 * @see com.prodyna.pac.ressys.usermgmt.service.UserService#getUserAircraftTypes(java.lang.Long)
 	 */
 	@Override
-	public List<AircraftType> getUserAircraftTypes(Long userId) {
+	public List<AircraftType> getAircraftTypes(Long userId) {
 		log.info("START getUserAircraftTypes() ...");
 		TypedQuery<AircraftType> findAircraftTypesForUser = getEntityManager()
 				.createNamedQuery(AircraftTypeToUser.FIND_AIRCRAFT_TYPE_FOR_USER, AircraftType.class);

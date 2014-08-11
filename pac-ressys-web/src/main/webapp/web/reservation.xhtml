@@ -16,38 +16,48 @@
     limitations under the License.
 -->
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-   xmlns:ui="http://java.sun.com/jsf/facelets"
-   xmlns:f="http://java.sun.com/jsf/core"
-   xmlns:h="http://java.sun.com/jsf/html"
-   template="/WEB-INF/templates/mainViewTemplate.xhtml">
-   <ui:define name="content">
-      <h2>Here you can create a new charter</h2>
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/mainViewTemplate.xhtml">
+	<f:metadata>
+		<f:viewParam name="aircraftId" value="#{charterController.aircraftId}"
+			required="true" requiredMessage="Conference id is required">
+		</f:viewParam>
+		<f:viewParam name="charterId" value="#{charterController.charterId}">
+		</f:viewParam>
+	</f:metadata>
 
-      <h:form id="charter">
-         <h2>New charter</h2>
-         <h:panelGrid columns="3" columnClasses="titleCell">
-            <h:outputLabel for="aircraftId" value="Aircraft name:"/>
-            <h:inputText id="aircraftId" value="#{newCharter.aircraftName}" />
-            <h:message for="aircraftId" errorClass="invalid"/>
+	<ui:define name="content">
+		<h2>Here you can create a new charter</h2>
 
-            <h:outputLabel for="startDate" value="Start date"/>
-            <h:inputText id="startDate" value="#{newCharter.startDate}"/>
-            <h:message for="startDate" errorClass="invalid"/>
+		<h:form id="charter">
+			<h2>New charter</h2>
+			<h:panelGrid columns="3" columnClasses="titleCell">
+				<h:outputLabel for="aircraftId" value="Aircraft name:" />
+				<h:outputText id="aircraftId" value="#{charterController.aircraft.aircraftName}" />
+				<h:message for="aircraftId" errorClass="invalid" />
 
-            <h:outputLabel for="endDate" value="End date"/>
-            <h:inputText id="endDate" value="#{newCharter.endDate}"/>
-            <h:message for="endDate" errorClass="invalid"/>
-         </h:panelGrid>
+				<h:outputLabel for="startDate" value="Start date" />
+				<h:inputText id="startDate" value="#{charterController.charterStartDate}" />
+				<h:message for="startDate" errorClass="invalid" />
 
-         <p>
-            <h:panelGrid columns="2">
-               <h:commandButton id="create" action="#{memberController.register}" value="Create" styleClass="register"/>
-               <h:commandButton id="cancel" action="index?faces-redirect=true" immediate="true" value="Cancel" styleClass="register"/>              
-            </h:panelGrid>
-            <h:messages styleClass="messages" errorClass="invalid" infoClass="valid" warnClass="warning"
-                           globalOnly="true"/>
+				<h:outputLabel for="endDate" value="End date" />
+				<h:inputText id="endDate" value="#{charterController.charterEndDate}" />
+				<h:message for="endDate" errorClass="invalid" />
+			</h:panelGrid>
 
-         </p>
-      </h:form>
-   </ui:define>
+			<p>
+				<h:panelGrid columns="2">
+					<h:commandButton id="create" action="#{charterController.saveCharter}" value="Create"
+						styleClass="register" />
+					<h:commandButton id="cancel" action="index?faces-redirect=true"
+						immediate="true" value="Cancel" styleClass="register" />
+				</h:panelGrid>
+				<h:messages styleClass="messages" errorClass="invalid"
+					infoClass="valid" warnClass="warning" globalOnly="true" />
+
+			</p>
+		</h:form>
+	</ui:define>
 </ui:composition>

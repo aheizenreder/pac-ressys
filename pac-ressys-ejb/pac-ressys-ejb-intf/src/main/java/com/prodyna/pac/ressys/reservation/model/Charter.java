@@ -32,12 +32,18 @@ import com.prodyna.pac.ressys.usermgmt.model.User;
  *
  */
 @Entity
-@NamedQueries({ @NamedQuery(name = Charter.SELECT_ALL_CHARTER, query = "SELECT a FROM Charter a") })
+@NamedQueries({
+		@NamedQuery(name = Charter.SELECT_ALL_CHARTER, query = "SELECT a FROM Charter a"),
+		@NamedQuery(name = Charter.RETURN_LENT_CHARTER, query = "UPDATE Charter c SET c.charterState = com.prodyna.pac.ressys.reservation.model.CharterState.RETURNED WHERE (c.charterState = com.prodyna.pac.ressys.reservation.model.CharterState.LENT OR c.charterState = com.prodyna.pac.ressys.reservation.model.CharterState.RESERVED) AND c.endDate < :end_date") })
 @Table(name = "charter", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
 public class Charter implements Serializable {
 
 	public static final String SELECT_ALL_CHARTER = "selectAllCharter";
-	
+
+	public static final String RETURN_LENT_CHARTER = "returnLentCharter";
+
+	public static final String RETURN_LENT_CHARTER_PARAMETER_NAME_END_DATE = "end_date";
+
 	/**
 	 * generated uid for serialization.
 	 */
@@ -55,22 +61,22 @@ public class Charter implements Serializable {
 	@Future
 	@Column(name = "start_date")
 	private Date startDate;
-	
+
 	@NotNull
 	@Future
 	@Column(name = "end_date")
 	private Date endDate;
-	
+
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "pilot_id", referencedColumnName = "id")
 	private User pilot;
-	
+
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "aircraft_id", referencedColumnName = "id")
 	private Aircraft aircraft;
-	
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "charter_state")
@@ -124,7 +130,8 @@ public class Charter implements Serializable {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -213,9 +220,9 @@ public class Charter implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "Charter [id=" + getId() + ", startDate=" + startDate
-				+ ", endDate=" + endDate + ", pilot=" + pilot + ", aircraft="
-				+ aircraft + ", charterState=" + charterState + "]";
+		return "Charter [id=" + id + ", startDate=" + startDate + ", endDate="
+				+ endDate + ", pilot=" + pilot + ", aircraft=" + aircraft
+				+ ", charterState=" + charterState + "]";
 	}
 
 	/*
@@ -232,7 +239,7 @@ public class Charter implements Serializable {
 		result = prime * result
 				+ ((charterState == null) ? 0 : charterState.hashCode());
 		result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
-		result = prime * result + (int) (getId() ^ (getId() >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((pilot == null) ? 0 : pilot.hashCode());
 		result = prime * result
 				+ ((startDate == null) ? 0 : startDate.hashCode());
@@ -258,17 +265,17 @@ public class Charter implements Serializable {
 				return false;
 		} else if (!aircraft.equals(other.aircraft))
 			return false;
-		if (charterState == null) {
-			if (other.charterState != null)
-				return false;
-		} else if (!charterState.equals(other.charterState))
+		if (charterState != other.charterState)
 			return false;
 		if (endDate == null) {
 			if (other.endDate != null)
 				return false;
 		} else if (!endDate.equals(other.endDate))
 			return false;
-		if (getId() != other.getId())
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (pilot == null) {
 			if (other.pilot != null)

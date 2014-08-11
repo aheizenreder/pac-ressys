@@ -103,6 +103,23 @@ public class LoginController implements Serializable {
 	}
 
 	/**
+	 * check the group of the current user and decides, if the actions for this
+	 * user are allowed.
+	 * 
+	 * @return true if the user is authorized to execute Actions on system.
+	 */
+	public boolean getActionsAllowed() {
+		boolean result = false;
+
+		HttpServletRequest request = (HttpServletRequest) facesContext
+				.getExternalContext().getRequest();
+		result = request.isUserInRole("Admin");
+		result = result || request.isUserInRole("User");
+
+		return result;
+	}
+
+	/**
 	 * @return the loginName
 	 */
 	public String getLoginName() {

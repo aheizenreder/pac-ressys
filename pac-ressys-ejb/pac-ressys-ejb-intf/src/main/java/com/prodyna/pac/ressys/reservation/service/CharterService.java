@@ -16,8 +16,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.prodyna.pac.ressys.basis.security.AdminAccessOnly;
+import com.prodyna.pac.ressys.basis.security.AdminUserAccess;
 import com.prodyna.pac.ressys.basis.security.AllAccess;
 import com.prodyna.pac.ressys.basis.security.Secured;
+import com.prodyna.pac.ressys.reservation.exception.CharterCancelException;
+import com.prodyna.pac.ressys.reservation.exception.CharterLendException;
+import com.prodyna.pac.ressys.reservation.exception.CharterReturnException;
 import com.prodyna.pac.ressys.reservation.model.Charter;
 
 /**
@@ -29,13 +33,13 @@ import com.prodyna.pac.ressys.reservation.model.Charter;
 @Secured
 @Path("/charter")
 public interface CharterService {
-	
+
 	/**
 	 * persists the charter in the database.
 	 * 
 	 * @param charter
 	 *            the charter object to persists in the database.
-	 * @return the with key information enriched charter  object.
+	 * @return the with key information enriched charter object.
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -96,6 +100,64 @@ public interface CharterService {
 	@AdminAccessOnly
 	public Charter delete(Charter charter);
 
+	/**
+	 * cancel a charter. This method checks the current state of charter
+	 * identified by id and set the new state to cancel.
+	 * 
+	 * @param id
+	 *            Id of the charter which is to cancel.
+	 * @return updated version of the canceled Charter.
+	 * @throws CharterCancelException
+	 *             by wrong status in charter by cancellation.
+	 */
+	@GET
+	@Path("/{id:[0-9]+/cancel")
+	@Produces(MediaType.APPLICATION_JSON)
+	@AdminUserAccess
+	public Charter cancel(@PathParam("id") Long id)
+			throws CharterCancelException;
 
+	/**
+	 * set a charter in state "lent".
+	 * 
+	 * @param id
+	 *            Id of the charter which is to set to status "lent".
+	 * @return updated version of charter.
+	 * @throws CharterLendException
+	 *             if the carter is in a wrong state for lend.
+	 */
+	@GET
+	@Path("/{id:[0-9]+/lend")
+	@Produces(MediaType.APPLICATION_JSON)
+	@AdminUserAccess
+	public Charter lend(@PathParam("id") Long id) throws CharterLendException;
 
+	/**
+	 * set a charter in state "returned".
+	 * 
+	 * @param id
+	 *            of the charter which is to return.
+	 * 
+	 * @return updated version of charter.
+	 * @throws CharterReturnException
+	 *             if charter in has wrong status for return.
+	 */
+	@GET
+	@Path("/{id:[0-9]+/return")
+	@Produces(MediaType.APPLICATION_JSON)
+	@AdminUserAccess
+	public Charter returnCharter(@PathParam("id") Long id)
+			throws CharterReturnException;
+
+	/**
+	 * set all charter in status 'lent' and which lent date is already expired
+	 * in status 'returned'.
+	 * 
+	 * @return number of returned charter.
+	 */
+	@GET
+	@Path("/returnAllOutstandingLends")
+	@Produces(MediaType.APPLICATION_JSON)
+	@AdminAccessOnly
+	public int returnAllOutstandingLends();
 }

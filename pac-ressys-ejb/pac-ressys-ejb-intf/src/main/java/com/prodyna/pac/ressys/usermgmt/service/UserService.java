@@ -192,10 +192,10 @@ public interface UserService {
 	 * @return a list with all aircraft types for given user.
 	 */
 	@GET
-	@Path("/{userid:[0-9]+}/getuseraircrafttypes")
+	@Path("/{userid:[0-9]+}/getAircraftTypes")
 	@Produces(MediaType.APPLICATION_JSON)
 	@AllAccess
-	public List<AircraftType> getUserAircraftTypes(@PathParam("userid") Long userId);
+	public List<AircraftType> getAircraftTypes(@PathParam("userid") Long userId);
 	
 	/**
 	 * adds a role to the user.

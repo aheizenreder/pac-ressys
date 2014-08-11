@@ -19,4 +19,13 @@
  </PROCESS-ITEM>
  <PROCESS-ITEM NAME="rules:#web#index.xhtml" PATH="/web/index.xhtml"
   SHAPE="240,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#web#reservation.xhtml"
+  PATH="/web/reservation.xhtml" SHAPE="32,241,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#web#reservation.xhtml:0" NAME="item"
+   PATH="/web/reservation.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="saved::#web#index.xhtml" NAME="output"
+    PATH="/web/index.xhtml" TARGET="rules:#web#index.xhtml"
+    TITLE="saved" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
 </PROCESS>

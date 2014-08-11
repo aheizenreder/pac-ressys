@@ -196,7 +196,8 @@ public class CharterRestServiceTest {
 				deploymentURL.toString() + "rest", UserService.class);
 
 		List<Aircraft> aircraftList = aircraftService.getAll();
-		int startListSize = aircraftList.size();
+		List<Charter> charterList = charterService.getAll();
+		int startListSize = charterList.size();
 		User user = null;
 		try {
 			user = userService.findByLoginName("andreas");

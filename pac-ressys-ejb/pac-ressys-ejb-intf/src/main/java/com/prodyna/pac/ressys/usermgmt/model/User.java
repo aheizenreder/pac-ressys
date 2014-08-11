@@ -357,8 +357,8 @@ public class User implements Serializable {
 				return false;
 		} else if (!password.equals(other.password))
 			return false;
-		if (passwordEncrypted != other.passwordEncrypted)
-			return false;
+//		if (passwordEncrypted != other.passwordEncrypted)
+//			return false;
 		if (userName == null) {
 			if (other.userName != null)
 				return false;

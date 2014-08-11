@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @NamedQueries({ @NamedQuery(name = Aircraft.SELECT_ALL_AIRCRAFT, query = "SELECT a FROM Aircraft a") })
-@Table(name = "aircraft", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
+@Table(name = "aircraft", uniqueConstraints = @UniqueConstraint(columnNames = "aircraft_name"))
 public class Aircraft implements Serializable {
 
 	public static final String SELECT_ALL_AIRCRAFT = "selectAllAircraft";
