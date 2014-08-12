@@ -68,7 +68,9 @@ public class LoginController implements Serializable {
 			HttpServletRequest request = (HttpServletRequest) facesContext
 					.getExternalContext().getRequest();
 			// login to the system
-			request.login(loginName, password);
+			if (!loggedIn && loginUser != null && !loginUser.getLoginName().equals(loginName)) {
+				request.login(loginName, password);
+			}
 
 			loggedIn = true;
 			// when login was successful then get the user by name

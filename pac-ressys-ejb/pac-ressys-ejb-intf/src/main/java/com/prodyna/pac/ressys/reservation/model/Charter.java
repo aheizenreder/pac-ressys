@@ -54,30 +54,29 @@ public class Charter implements Serializable {
 	 */
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@NotNull
 	private Long id;
 
-	@NotNull
-	@Future
+	@NotNull(message = "Start date may not be null!")
+	@Future(message = "Start date must be in the future!")
 	@Column(name = "start_date")
 	private Date startDate;
 
-	@NotNull
-	@Future
+	@NotNull(message = "End date may not be null!")
+	@Future(message = "End date must be in the future!")
 	@Column(name = "end_date")
 	private Date endDate;
 
-	@NotNull
+	@NotNull(message = "Pilot may not be null!")
 	@ManyToOne
 	@JoinColumn(name = "pilot_id", referencedColumnName = "id")
 	private User pilot;
 
-	@NotNull
+	@NotNull(message = "Aircraft may not be null!")
 	@ManyToOne
 	@JoinColumn(name = "aircraft_id", referencedColumnName = "id")
 	private Aircraft aircraft;
 
-	@NotNull
+	@NotNull(message = "No state for charter set!")
 	@Enumerated(EnumType.STRING)
 	@Column(name = "charter_state")
 	private CharterState charterState;

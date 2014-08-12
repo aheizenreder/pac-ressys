@@ -24,6 +24,7 @@ import com.prodyna.pac.ressys.aircraft.service.AircraftService;
 import com.prodyna.pac.ressys.pac.ressys.controller.login.LoginController;
 import com.prodyna.pac.ressys.pac.ressys.util.PacRessysRestClientProducer;
 import com.prodyna.pac.ressys.reservation.model.Charter;
+import com.prodyna.pac.ressys.reservation.model.CharterState;
 import com.prodyna.pac.ressys.reservation.service.CharterService;
 
 /**
@@ -98,15 +99,17 @@ public class CharterController implements Serializable {
 	public String saveCharter() {
 		Set<ConstraintViolation<Charter>> validate = validator
 				.validate(charter);
+
+		charterService = getCharterService();
+
 		if (validate.isEmpty()) {
 			try {
-				if (charter.getId() == 0) {
-					charter.setPilot(loginController.getLoginUser());
-					charter.setAircraft(aircraft);
+				if (charter.getId() == null) {
 					charterService.create(charter);
 				} else {
 					charterService.update(charter);
 				}
+				return "saved";
 			} catch (Exception e) {
 				throw new ValidationException("Unable to save charter", e);
 			}
@@ -116,9 +119,8 @@ public class CharterController implements Serializable {
 						constraintViolation.getMessage(), "");
 				facesContext.addMessage(null, m);
 			}
-			throw new ValidationException("Entity not valid.");
 		}
-		return "saved";
+		return "notSaved";
 	}
 
 	private CharterService getCharterService() {
@@ -157,6 +159,8 @@ public class CharterController implements Serializable {
 			// initialize Aircraft for reservation.
 			AircraftService aircraftService = getAircraftService();
 			aircraft = aircraftService.get(aircraftId);
+			charter.setPilot(loginController.getLoginUser());
+			charter.setCharterState(CharterState.RESERVED);
 			charter.setAircraft(aircraft);
 		}
 	}
@@ -215,8 +219,6 @@ public class CharterController implements Serializable {
 						"Please check start date! Expected format is 'dd.MM.YYYY HH:mm'",
 						"");
 				facesContext.addMessage(null, m);
-				throw new ValidationException("start date: " + e.getMessage(),
-						e);
 			}
 		}
 	}
@@ -230,20 +232,18 @@ public class CharterController implements Serializable {
 		return result;
 	}
 
-	public void setCharterEndDate(String startDate) {
-		if (startDate != null && startDate.trim().length() > 0) {
+	public void setCharterEndDate(String endDate) {
+		if (endDate != null && endDate.trim().length() > 0) {
 
 			try {
-				Date startDateDate = DF.parse(startDate);
-				charter.setStartDate(startDateDate);
+				Date endDateDate = DF.parse(endDate);
+				charter.setEndDate(endDateDate);
 			} catch (ParseException e) {
 				FacesMessage m = new FacesMessage(
 						FacesMessage.SEVERITY_ERROR,
 						"Please check end date! Expected format is 'dd.MM.YYYY HH:mm'",
 						"");
 				facesContext.addMessage(null, m);
-				throw new ValidationException("start date: " + e.getMessage(),
-						e);
 			}
 		}
 	}
