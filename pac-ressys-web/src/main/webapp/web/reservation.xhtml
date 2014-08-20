@@ -31,25 +31,37 @@
 	<ui:define name="content">
 		<h2>Here you can create a new charter</h2>
 
+		<h:messages styleClass="messages" errorClass="invalid"
+			infoClass="valid" warnClass="warning" globalOnly="true" />
+
 		<h:form id="charter">
 			<h2>New charter</h2>
 			<h:panelGrid columns="3" columnClasses="titleCell">
+				<h:outputLabel for="pilotName" value="Pilot:" />
+				<h:outputText id="pilotName"
+					value="#{charterController.charter.pilot.userName}" />
+				<h:message for="pilotName" errorClass="invalid" />
+
 				<h:outputLabel for="aircraftId" value="Aircraft name:" />
-				<h:outputText id="aircraftId" value="#{charterController.aircraft.aircraftName}" />
+				<h:outputText id="aircraftId"
+					value="#{charterController.aircraft.aircraftName}" />
 				<h:message for="aircraftId" errorClass="invalid" />
 
 				<h:outputLabel for="startDate" value="Start date" />
-				<h:inputText id="startDate" value="#{charterController.charterStartDate}" />
+				<h:inputText id="startDate"
+					value="#{charterController.charterStartDate}" />
 				<h:message for="startDate" errorClass="invalid" />
 
 				<h:outputLabel for="endDate" value="End date" />
-				<h:inputText id="endDate" value="#{charterController.charterEndDate}" />
+				<h:inputText id="endDate"
+					value="#{charterController.charterEndDate}" />
 				<h:message for="endDate" errorClass="invalid" />
 			</h:panelGrid>
 
 			<p>
 				<h:panelGrid columns="2">
-					<h:commandButton id="create" action="#{charterController.saveCharter}" value="Create"
+					<h:commandButton id="create"
+						action="#{charterController.saveCharter}" value="Create"
 						styleClass="register" />
 					<h:commandButton id="cancel" action="index?faces-redirect=true"
 						immediate="true" value="Cancel" styleClass="register" />
