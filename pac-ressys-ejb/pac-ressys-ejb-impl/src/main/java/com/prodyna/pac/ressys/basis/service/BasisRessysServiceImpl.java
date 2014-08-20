@@ -16,7 +16,7 @@ import javax.persistence.Query;
  * @author Andreas Heizenreder (PRODYNA AG)
  *
  */
-public abstract class BasisRessysServiceImpl<T>{
+public abstract class BasisRessysServiceImpl<T> {
 
 	@Inject
 	private Logger log;
@@ -34,6 +34,7 @@ public abstract class BasisRessysServiceImpl<T>{
 	public T createEntity(T entity) {
 		log.info("Create new  entity in the database ...");
 		em.persist(entity);
+		em.flush();
 		log.info("Entity " + entity.toString() + " persisted . ");
 
 		return entity;
@@ -83,6 +84,7 @@ public abstract class BasisRessysServiceImpl<T>{
 	public T updateEntity(T entity) {
 		log.info("Update entiy" + entity.toString() + " ...");
 		em.merge(entity);
+		em.flush();
 		log.info("Entity updated.");
 
 		return entity;
@@ -101,6 +103,7 @@ public abstract class BasisRessysServiceImpl<T>{
 		log.info("Delete entity  with id " + id + "...");
 		T dbEntity = em.find(clazz, id);
 		em.remove(dbEntity);
+		em.flush();
 		log.info("entity " + dbEntity.toString() + " was deleted.");
 
 		return dbEntity;

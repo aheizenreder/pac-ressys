@@ -16,6 +16,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.prodyna.pac.ressys.aircraft.model.Aircraft;
+import com.prodyna.pac.ressys.basis.exception.CreateFailedException;
+import com.prodyna.pac.ressys.basis.exception.DeleteFailedException;
+import com.prodyna.pac.ressys.basis.exception.NotFoundException;
+import com.prodyna.pac.ressys.basis.exception.UpdateFailedException;
 import com.prodyna.pac.ressys.basis.security.AdminAccessOnly;
 import com.prodyna.pac.ressys.basis.security.AllAccess;
 import com.prodyna.pac.ressys.basis.security.Secured;
@@ -28,20 +32,22 @@ import com.prodyna.pac.ressys.basis.security.Secured;
  */
 @Secured
 @Path("/aircraft")
-public interface AircraftService{
-	
+public interface AircraftService {
+
 	/**
 	 * persists the aircraft in the database.
 	 * 
 	 * @param aircraft
 	 *            the aircraft object to persists in the database.
-	 * @return the with key information enriched aircraft  object.
+	 * @return the with key information enriched aircraft object.
+	 * @throws CreateFailedException
+	 *             if errors occurs by creation of the element in the database.
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@AdminAccessOnly
-	public Aircraft create(Aircraft aircraft);
+	public Aircraft create(Aircraft aircraft) throws CreateFailedException;
 
 	/**
 	 * reads the aircraft identified by id from the database.
@@ -50,12 +56,14 @@ public interface AircraftService{
 	 *            Id of the aircraft, which is to read.
 	 * 
 	 * @return from database read aircraft object.
+	 * @throws NotFoundException
+	 *             if errors occurs by look up for an element by its id.
 	 */
 	@GET
 	@Path("/{id:[0-9]+}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@AllAccess
-	public Aircraft get(@PathParam("id") Long id);
+	public Aircraft get(@PathParam("id") Long id) throws NotFoundException;
 
 	/**
 	 * reads all aircraft from database.
@@ -75,12 +83,14 @@ public interface AircraftService{
 	 *            persist.
 	 * 
 	 * @return the updated aircraft object.
+	 * @throws UpdateFailedException
+	 *             if errors occurs by updating the element.
 	 */
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@AdminAccessOnly
-	public Aircraft update(Aircraft aircraft);
+	public Aircraft update(Aircraft aircraft) throws UpdateFailedException;
 
 	/**
 	 * deletes by the aircraft represented object from database.
@@ -89,12 +99,13 @@ public interface AircraftService{
 	 *            object to delete.
 	 * 
 	 * @return updated aircraft object after delete.
+	 * @throws DeleteFailedException
+	 *             if errors occurs by delete the element.
 	 */
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@AdminAccessOnly
-	public Aircraft delete(Aircraft aircraft);
-
+	public Aircraft delete(Aircraft aircraft) throws DeleteFailedException;
 
 }
